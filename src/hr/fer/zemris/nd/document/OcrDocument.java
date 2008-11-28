@@ -18,7 +18,6 @@ public class OcrDocument {
 	private BufferedImage scan;
 	private OcrScheme scheme;
 	private List<NumberField> numberFields;
-	private Map<Integer, Coordinate> fieldCoordinates;
 	
 	
 	public OcrDocument(BufferedImage scan, OcrScheme scheme) {
@@ -42,8 +41,6 @@ public class OcrDocument {
 		}
 		return this.numberFields.get(index);
 	}
-	
-	
 	
 	
 }
