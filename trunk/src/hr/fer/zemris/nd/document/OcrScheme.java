@@ -17,10 +17,10 @@ public class OcrScheme {
 	
 	
 	
-	public 
+	//public 
 	
 	
-	public OcrScheme (int i)
+	//public OcrScheme (int i)
 	
 
 }
