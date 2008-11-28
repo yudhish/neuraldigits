@@ -83,6 +83,15 @@ public class Coordinate {
 	}
 	
 	
-	
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("(");
+		buffer.append(x);
+		buffer.append(", ");
+		buffer.append(y);
+		buffer.append(")");
+		return buffer.toString();
+	}
 
 }

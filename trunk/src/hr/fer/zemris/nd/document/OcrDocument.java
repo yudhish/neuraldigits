@@ -16,8 +16,32 @@ import java.util.Map;
 public class OcrDocument {
 
 	private BufferedImage scan;
+	private OcrScheme scheme;
 	private List<NumberField> numberFields;
 	private Map<Integer, Coordinate> fieldCoordinates;
+	
+	
+	public OcrDocument(BufferedImage scan, OcrScheme scheme) {
+		this.scan = scan;
+		this.scheme = scheme;
+	}
+	
+	
+	private void generateSegments() {
+		// TODO do the simple segmentation here
+	}
+	
+	
+	private NumberField getNumberField(int index) {
+		if(index < 0) {
+			throw new IllegalArgumentException("The index of the number field " +
+					"needs to be greater than or equal to zero. ");
+		}
+		return this.numberFields.get(index);
+	}
+	
+	
+//	private 
 	
 	
 }
