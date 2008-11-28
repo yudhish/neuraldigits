@@ -2,6 +2,7 @@ package hr.fer.zemris.nd.document;
 
 import hr.fer.zemris.nd.document.util.ESegment;
 
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 
@@ -40,7 +41,7 @@ public class DigitField {
 	/**
 	 * Create a object for every of the 7 segments placed in the digit
 	 */
-	public void createSegments(){
+	public void createSegments(){		
 		
 	}	
 
