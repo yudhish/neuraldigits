@@ -1,5 +1,7 @@
 package hr.fer.zemris.nd.document;
 
+import hr.fer.zemris.nd.document.util.ESegment;
+
 import java.awt.image.BufferedImage;
 
 
@@ -32,7 +34,7 @@ public class DigitField {
 	 * @param image predefined image 
 	 */
 	public DigitField(BufferedImage image){
-		digitImage=image;
+		digitImage=image;		
 	}
 	
 	/**
