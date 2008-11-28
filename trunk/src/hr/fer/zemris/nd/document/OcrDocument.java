@@ -33,6 +33,9 @@ public class OcrDocument {
 	
 	
 	private NumberField getNumberField(int index) {
+		if(this.numberFields == null) {
+			this.generateSegments();
+		}
 		if(index < 0) {
 			throw new IllegalArgumentException("The index of the number field " +
 					"needs to be greater than or equal to zero. ");
@@ -41,7 +44,6 @@ public class OcrDocument {
 	}
 	
 	
-//	private 
 	
 	
 }
