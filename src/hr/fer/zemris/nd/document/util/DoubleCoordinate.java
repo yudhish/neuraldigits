@@ -7,9 +7,10 @@ package hr.fer.zemris.nd.document.util;
  * @author goran
  *
  */
-public class Coordinate {
-	private int x;
-	private int y;
+public class DoubleCoordinate {
+	private double x;
+	private double y;
+	private boolean aligned;
 	
 	
 	/**
@@ -18,7 +19,7 @@ public class Coordinate {
 	 * @param x x coordinate
 	 * @param y y coordinate
 	 */
-	public Coordinate(int x, int y) {
+	public DoubleCoordinate(int x, int y) {
 		if(x < 0) {
 			throw new IllegalArgumentException("The x coordinate needs to be " +
 					"an integer, greater than or equal to zero. ");
@@ -34,32 +35,49 @@ public class Coordinate {
 	}
 	
 	
-	public Coordinate (Coordinate coordinate) {
-		this.x = coordinate.x;
-		this.y = coordinate.y;
+	/**
+	 * Creates a new <code>Coordinate</code>, based on the x and y coordinates. 
+	 * 
+	 * @param x x coordinate
+	 * @param y y coordinate
+	 */
+	public DoubleCoordinate(double x, double y) {
+		if(x < 0) {
+			throw new IllegalArgumentException("The x coordinate needs to be " +
+					"an integer, greater than or equal to zero. ");
+		}
+		if(x < 0) {
+			throw new IllegalArgumentException("The x coordinate needs to be " +
+					"an integer, greater than or equal to zero. ");
+		}
+		
+		this.x = x;
+		this.y = y;
+		
 	}
 	
 	
+	public DoubleCoordinate (DoubleCoordinate coordinate) {
+		this.x = coordinate.x;
+		this.y = coordinate.y;
+	}
 
 
 	/**
 	 * @param x the x to set
 	 */
-	public void setX(int x) {
+	public void setX(double x) {
 		this.x = x;
 	}
-	
 	
 	
 
 	/**
 	 * @param y the y to set
 	 */
-	public void setY(int y) {
+	public void setY(double y) {
 		this.y = y;
 	}
-	
-	
 	
 	
 	/**
@@ -68,7 +86,7 @@ public class Coordinate {
 	 * 
 	 * @param coordinate
 	 */
-	public void set(Coordinate coordinate) {
+	public void set(DoubleCoordinate coordinate) {
 		this.x = coordinate.getX();
 		this.y = coordinate.getY();
 	}
@@ -77,34 +95,33 @@ public class Coordinate {
 	/**
 	 * @return the x
 	 */
-	public int getX() {
+	public double getX() {
 		return x;
 	}
-	
-	
 
 
 	/**
 	 * @return the y
 	 */
-	public int getY() {
+	public double getY() {
 		return y;
 	}
-	
+
 	
 
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
-	
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + x;
-		result = prime * result + y;
+		long temp;
+		temp = Double.doubleToLongBits(x);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(y);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
 
@@ -118,12 +135,12 @@ public class Coordinate {
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof Coordinate))
+		if (!(obj instanceof DoubleCoordinate))
 			return false;
-		Coordinate other = (Coordinate) obj;
-		if (x != other.x)
+		DoubleCoordinate other = (DoubleCoordinate) obj;
+		if (Double.doubleToLongBits(x) != Double.doubleToLongBits(other.x))
 			return false;
-		if (y != other.y)
+		if (Double.doubleToLongBits(y) != Double.doubleToLongBits(other.y))
 			return false;
 		return true;
 	}

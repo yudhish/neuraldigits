@@ -4,8 +4,10 @@
 package hr.fer.zemris.nd.document;
 
 import hr.fer.zemris.nd.document.util.Coordinate;
+import hr.fer.zemris.nd.document.util.RectangularArea;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,15 +25,26 @@ public class OcrDocument {
 	public OcrDocument(BufferedImage scan, OcrScheme scheme) {
 		this.scan = scan;
 		this.scheme = scheme;
+		if(!scheme.sizeAppropriateFor(scan)) {
+			throw new IllegalArgumentException("The sizes of the OCR Scheme and the image " +
+					"need to be equal. ");
+		}
+		this.numberFields = new ArrayList<NumberField>();
+		generateSegments();
 	}
 	
 	
 	private void generateSegments() {
-		// TODO do the simple segmentation here
+		for(int i = 0; i < this.scheme.getInterestAreasNumber(); i++) {
+			RectangularArea numberFieldArea = this.scheme.getInterestArea(i);
+			this.numberFields.add(new NumberField(this.scan.getSubimage(
+					numberFieldArea.getTopLeft().getX(), numberFieldArea.getTopLeft().getY(), 
+					numberFieldArea.getWidth(), numberFieldArea.getHeight())));
+		}
 	}
 	
 	
-	private NumberField getNumberField(int index) {
+	public NumberField getNumberField(int index) {
 		if(this.numberFields == null) {
 			this.generateSegments();
 		}
@@ -40,6 +53,14 @@ public class OcrDocument {
 					"needs to be greater than or equal to zero. ");
 		}
 		return this.numberFields.get(index);
+	}
+
+
+	/**
+	 * @return the scan
+	 */
+	public BufferedImage getScan() {
+		return scan;
 	}
 	
 	
