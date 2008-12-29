@@ -3,22 +3,24 @@ package hr.fer.zemris.nd.document;
 import hr.fer.zemris.nd.document.util.RectangularArea;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
 
 public class NumberFieldScheme {
 
 	private int width;
 	private int height;
-	private List<RectangularArea> interestAreas;
+	private List<RectangularArea> digitAreas;
 	
-	private NumberFieldScheme(int width, int height) {
-		if(this.width <= 0 || this.height <= 0) {
+	public NumberFieldScheme(int width, int height) {
+		if(width <= 0 || height <= 0) {
 			throw new IllegalArgumentException("The width and height need to be " +
 					"positive integers");
 		}
 		
 		this.width = width;
 		this.height = height;
+		this.digitAreas = new ArrayList<RectangularArea>();
 	}
 	
 	
@@ -28,13 +30,13 @@ public class NumberFieldScheme {
 					"The specified area is not within the NumberField Scheme document area ("+
 					this.width+", "+this.height+"). ");
 		}
-		for(RectangularArea element: this.interestAreas) {
+		for(RectangularArea element: this.digitAreas) {
 			if(element.overlapsWith(area)) {
 				throw new IllegalArgumentException(
 						"The area "+area+" overlaps with allready defined area "+element+". ");
 			}
 		}
-		this.interestAreas.add(area);
+		this.digitAreas.add(area);
 	}
 	
 	
@@ -54,7 +56,7 @@ public class NumberFieldScheme {
 		buffer.append(" x ");
 		buffer.append(this.height);
 		buffer.append(", interest areas: ");
-		buffer.append(this.interestAreas);
+		buffer.append(this.digitAreas);
 		return buffer.toString();
 	}
 	
@@ -68,12 +70,12 @@ public class NumberFieldScheme {
 	
 	
 	public int getInterestAreasNumber() {
-		return this.interestAreas.size();
+		return this.digitAreas.size();
 	}
 	
 	
 	public RectangularArea getInterestArea(int i) {
-		return this.interestAreas.get(i);
+		return this.digitAreas.get(i);
 	}
 	
 	
