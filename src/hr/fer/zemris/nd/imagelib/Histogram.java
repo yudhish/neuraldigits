@@ -65,5 +65,8 @@ public class Histogram {
 	}
 	
 	
+	public static void showXHistogram(BufferedImage image) {
+//		Histogram
+	}
 
 }

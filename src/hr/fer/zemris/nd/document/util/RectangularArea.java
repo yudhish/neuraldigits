@@ -33,7 +33,7 @@ public class RectangularArea {
 	
 	
 	public int getHeight() {
-		return (this.topRight.getY() - this.bottomRight.getX());
+		return (this.bottomRight.getY() - this.topRight.getY());
 	}
 
 
