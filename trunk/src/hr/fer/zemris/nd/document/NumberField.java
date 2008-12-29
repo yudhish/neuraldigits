@@ -8,17 +8,11 @@ import hr.fer.zemris.nd.document.util.RectangularArea;
 import hr.fer.zemris.nd.document.util.ui.BufferedImageDrawer;
 
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.awt.image.renderable.ParameterBlock;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.media.jai.ROI;
 import javax.swing.JFrame;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 

@@ -3,13 +3,11 @@
  */
 package hr.fer.zemris.nd.document;
 
-import hr.fer.zemris.nd.document.util.Coordinate;
 import hr.fer.zemris.nd.document.util.RectangularArea;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author goran

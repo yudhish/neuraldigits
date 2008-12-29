@@ -10,7 +10,6 @@ package hr.fer.zemris.nd.document.util;
 public class DoubleCoordinate {
 	private double x;
 	private double y;
-	private boolean aligned;
 	
 	
 	/**
