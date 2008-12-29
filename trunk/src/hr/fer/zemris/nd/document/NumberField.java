@@ -3,7 +3,7 @@
  */
 package hr.fer.zemris.nd.document;
 
-import hr.fer.zemris.nd.analisys.HistogramSchemeAnaliser;
+import hr.fer.zemris.nd.analisys.HistogramMinimaAnaliser;
 import hr.fer.zemris.nd.document.util.RectangularArea;
 import hr.fer.zemris.nd.document.util.ui.BufferedImageDrawer;
 
@@ -82,7 +82,7 @@ public class NumberField {
 
 
 	private NumberFieldScheme hetHistogramAnalisysScheme() {
-		HistogramSchemeAnaliser analyser = new HistogramSchemeAnaliser(this.scan);
+		HistogramMinimaAnaliser analyser = new HistogramMinimaAnaliser(this.scan);
 		NumberFieldScheme scheme = new NumberFieldScheme(
 				this.scan.getWidth(), this.scan.getHeight());
 		for(RectangularArea area: analyser.getDigitAreas()) {
