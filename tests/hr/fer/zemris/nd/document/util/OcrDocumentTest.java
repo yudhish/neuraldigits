@@ -1,18 +1,16 @@
 package hr.fer.zemris.nd.document.util;
 
+import hr.fer.zemris.nd.document.NumberField;
+import hr.fer.zemris.nd.document.OcrDocument;
+import hr.fer.zemris.nd.document.OcrScheme;
+
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-
-import hr.fer.zemris.nd.document.NumberField;
-import hr.fer.zemris.nd.document.OcrDocument;
-import hr.fer.zemris.nd.document.OcrScheme;
 
 public class OcrDocumentTest {
 
@@ -49,7 +47,6 @@ public class OcrDocumentTest {
 		JFrame frame = new JFrame();
 		frame.setTitle("Cropped field");
 		frame.setSize(new Dimension(fieldImage.getWidth(), fieldImage.getHeight()));
-		Graphics2D g2d = fieldImage.createGraphics();
 		System.out.println("end");
 		
 		
