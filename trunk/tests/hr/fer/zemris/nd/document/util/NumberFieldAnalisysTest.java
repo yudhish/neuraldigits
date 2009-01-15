@@ -25,7 +25,8 @@ public class NumberFieldAnalisysTest {
 		System.out.println("Loading image.");
 		try {
 			image = ImageIO.read(new File(
-					"/home/goran/Desktop/Neuronske mreze uzorci rani/02bw.png"));
+					"/media/data/Documents/fer/Peta godina/Deveti semestar/" +
+					"Neuronske mreze/Neuronske mreze uzorci rani/scan01.png"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
