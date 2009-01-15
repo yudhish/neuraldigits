@@ -11,6 +11,8 @@ import java.awt.image.WritableRaster;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.JFrame;
+
 /**
  * @author goran
  *
@@ -29,12 +31,24 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 	
 	@Override
 	public List<RectangularArea> getDigitAreas() {
-		double[] xValues = Histogram.getXValues(image);
+		System.out.println("Image type: "+this.image.getType());
+		int[] xValues = Histogram.getXValues(image);
 		System.out.println("X Values: \n");
+		Histogram.showXHistogram(xValues, image.getType());
 		System.out.println(Arrays.toString(xValues));
+		
+		// TODO finish segmentation here
 		
 		return null;
 	}
+
+
+	private void drawHorizontalHistogram(double[] values) {
+		
+	}
+
+
+
 
 	
 	
