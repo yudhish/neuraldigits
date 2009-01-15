@@ -6,6 +6,7 @@ package hr.fer.zemris.nd.document;
 import hr.fer.zemris.nd.analisys.HistogramMinimaAnaliser;
 import hr.fer.zemris.nd.document.util.RectangularArea;
 import hr.fer.zemris.nd.document.util.ui.BufferedImageDrawer;
+import hr.fer.zemris.nd.gui.ImageDisplay;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
@@ -50,11 +51,8 @@ public class NumberField {
 	private void createScheme() {
 		System.out.println("Initializing scheme.");
 		this.scheme = new NumberFieldScheme(this.scan.getWidth(), this.scan.getHeight());
-		JFrame frame = new JFrame();
-		frame.add(new BufferedImageDrawer(this.scan));
-		frame.setSize(new Dimension(this.scan.getWidth(), this.scan.getHeight()));
-		frame.setVisible(true);
-		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		
+		ImageDisplay.displayImage(this.scan);
 		
 		NumberFieldScheme histogramAnalisysScheme = 
 			this.hetHistogramAnalisysScheme();

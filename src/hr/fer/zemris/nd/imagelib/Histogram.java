@@ -3,7 +3,13 @@
  */
 package hr.fer.zemris.nd.imagelib;
 
+import hr.fer.zemris.nd.gui.ImageDisplay;
+
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
+import java.util.Iterator;
+
+import javax.swing.JFrame;
 
 /**
  * @author goran
@@ -11,14 +17,15 @@ import java.awt.image.BufferedImage;
  */
 public class Histogram {
 
-	public static double getXSum(BufferedImage image, int x) {
+	public static int getXSum(BufferedImage image, int x) {
 		if(x < 0 || x > image.getWidth()) {
 			throw new IndexOutOfBoundsException("The x coordinate needs to be " +
 					"within the image bounds. ");
 		}
-		double sum = 0;
+		int sum = 0;
+		int[] pixelValue = new int[3];
 		for(int i = 0; i < image.getRaster().getHeight(); i++) {
-			sum += image.getRaster().getPixel(x, i, new double[1])[0];
+			sum += image.getRaster().getPixel(x, i, pixelValue)[0];
 		}
 		return sum;
 	}
@@ -29,8 +36,8 @@ public class Histogram {
 	}
 	
 	
-	public static double[] getXValues(BufferedImage image) {
-		double[] xValues = new double[image.getWidth()];
+	public static int[] getXValues(BufferedImage image) {
+		int[] xValues = new int[image.getWidth()];
 		for(int i = 0; i < xValues.length; i++) {
 			xValues[i] = getXSum(image, i);
 		}
@@ -66,7 +73,106 @@ public class Histogram {
 	
 	
 	public static void showXHistogram(BufferedImage image) {
-//		Histogram
+		
+	}
+	
+	
+	public static void showXHistogram(int[] histogramArray, int imageType) {
+		int max = getMax(histogramArray);
+		int windowHeight = getXHistogramHeight(max);
+		double scale = max/windowHeight;
+		BufferedImage histogramImage = Histogram.getHistogramGraph(
+				histogramArray, windowHeight, scale, imageType);
+		ImageDisplay.displayImage(histogramImage);
+		
+		
+		
+	}
+	
+	
+	private static BufferedImage getHistogramGraph(
+			int[] histogramArray, int windowHeight, double scale, int imageType) {
+		if(imageType != 10 && imageType != 12) {
+			throw new IllegalArgumentException("The image type is not supported");
+		}
+		
+		BufferedImage image;
+		
+		if(imageType == 10) {
+			image = drawType10Image(histogramArray, windowHeight, scale);
+		} else {
+			image = drawType12Image(histogramArray, windowHeight, scale);
+		}
+		
+		return image;
+	}
+
+
+	private static BufferedImage drawType10Image(int[] histogramArray,
+			int windowHeight, double scale) {
+		BufferedImage image = new BufferedImage(
+				histogramArray.length, windowHeight, BufferedImage.TYPE_BYTE_GRAY); 
+		int[] pixelValueBlack = new int[]{0};
+		int[] pixelValueWhite = new int[]{255};
+		System.out.println(Arrays.toString(pixelValueWhite));
+		
+		for (int i = 0; i < histogramArray.length; i++) {
+			for(int j = 0; j < windowHeight; j++) {
+				if(j < histogramArray[i] * 1/scale) {
+					image.getRaster().setPixel(i, j, pixelValueWhite);
+				} else {
+					image.getRaster().setPixel(i, j, pixelValueBlack);
+				}
+			}
+		}
+		return image;
+	}
+
+
+	private static BufferedImage drawType12Image(int[] histogramArray,
+			int windowHeight, double scale) {
+		BufferedImage image = new BufferedImage(
+				histogramArray.length, windowHeight, BufferedImage.TYPE_BYTE_GRAY); 
+		int[] pixelValueBlack = new int[]{0};
+		int[] pixelValueWhite = new int[]{255};
+		System.out.println(Arrays.toString(pixelValueWhite));
+		
+		for (int i = 0; i < histogramArray.length; i++) {
+			for(int j = windowHeight - 1; j >= 0; j--) {
+				if(j < histogramArray[i] * 1/scale) {
+					image.getRaster().setPixel(i, windowHeight - j - 1, pixelValueBlack);
+				} else {
+					image.getRaster().setPixel(i, windowHeight - j - 1, pixelValueWhite);
+				}
+			}
+		}
+		
+		return image;
+	}
+
+
+	private static int getXHistogramHeight(int max) {
+		int windowHeight;
+		if(max < 50) {
+			windowHeight = 50;
+		} else {
+			windowHeight = (int)max;
+		}
+		if(max > 100) {
+			windowHeight = 100;
+		}
+		return windowHeight;
+	}
+
+
+	private static int getMax(int[] values) {
+		int max = -Integer.MAX_VALUE;
+		
+		for (int i = 0; i < values.length; i++) {
+			if(values[i] > max) {
+				max = values[i];
+			}
+		}return max;
 	}
 
 }
