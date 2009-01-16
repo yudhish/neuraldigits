@@ -5,7 +5,7 @@ package hr.fer.zemris.nd.document;
 
 import hr.fer.zemris.nd.analisys.HistogramMinimaAnaliser;
 import hr.fer.zemris.nd.document.util.RectangularArea;
-import hr.fer.zemris.nd.document.util.ui.BufferedImageDrawer;
+import hr.fer.zemris.nd.gui.BufferedImageDrawer;
 import hr.fer.zemris.nd.gui.ImageDisplay;
 
 import java.awt.Dimension;

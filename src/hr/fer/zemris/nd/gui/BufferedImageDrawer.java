@@ -1,7 +1,7 @@
 /**
  * 
  */
-package hr.fer.zemris.nd.document.util.ui;
+package hr.fer.zemris.nd.gui;
 
 import java.awt.Component;
 import java.awt.Graphics;

@@ -3,7 +3,6 @@
  */
 package hr.fer.zemris.nd.gui;
 
-import hr.fer.zemris.nd.document.util.ui.BufferedImageDrawer;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
