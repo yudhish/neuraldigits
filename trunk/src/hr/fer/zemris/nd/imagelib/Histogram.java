@@ -8,9 +8,6 @@ import hr.fer.zemris.nd.gui.ImageDisplay;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
-import java.util.Iterator;
-
-import javax.swing.JFrame;
 
 /**
  * @author goran
