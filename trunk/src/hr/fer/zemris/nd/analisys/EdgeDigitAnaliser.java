@@ -58,7 +58,7 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 		
 		for(int i=0;i<digits.size();i++){
 			
-			//getting left border
+			//getting top border
 			for(int height=0;height<digits.get(i).getHeight();height+=height/50){
 				Integer tmpValue=getLeftOuterBound(i, height);
 				if (tmpValue!=-1){
