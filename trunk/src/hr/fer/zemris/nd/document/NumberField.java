@@ -9,6 +9,7 @@ import hr.fer.zemris.nd.gui.BufferedImageDrawer;
 import hr.fer.zemris.nd.gui.ImageDisplay;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,10 +53,10 @@ public class NumberField {
 		System.out.println("Initializing scheme.");
 		this.scheme = new NumberFieldScheme(this.scan.getWidth(), this.scan.getHeight());
 		
-		ImageDisplay.displayImage(this.scan);
+		ImageDisplay.displayImage(this.scan, new Point(150, 0));
 		
 		NumberFieldScheme histogramAnalisysScheme = 
-			this.hetHistogramAnalisysScheme();
+			this.getHistogramAnalisysScheme();
 		NumberFieldScheme edgeDetectionScheme = getEdgeDetectionScheme();
 		System.out.println("Histogram analisys scheme: \n"+histogramAnalisysScheme);
 		System.out.println();
@@ -73,7 +74,7 @@ public class NumberField {
 
 
 
-	private NumberFieldScheme hetHistogramAnalisysScheme() {
+	private NumberFieldScheme getHistogramAnalisysScheme() {
 		HistogramMinimaAnaliser analyser = new HistogramMinimaAnaliser(this.scan);
 		NumberFieldScheme scheme = new NumberFieldScheme(
 				this.scan.getWidth(), this.scan.getHeight());
