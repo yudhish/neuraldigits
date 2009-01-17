@@ -22,9 +22,16 @@ import sun.util.BuddhistCalendar;
  */
 public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 
-	BufferedImage image;
-	BufferedImage displayImage;
-	WritableRaster raster;
+	private BufferedImage image;
+	private BufferedImage displayImage;
+	private WritableRaster raster;
+	private int[] xHistogram;
+	private int[] yHistogram;
+	public RectangularArea boundingBox;
+	
+	
+	
+	
 	
 	
 	public HistogramMinimaAnaliser(BufferedImage image) {
@@ -40,12 +47,12 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 	@Override
 	public List<RectangularArea> getDigitAreas() {
 		System.out.println("Image type: "+this.image.getType());
-		int[] xValues = Histogram.getXValues(image);
-		int[] yValues = Histogram.getYValues(image);
+		this.xHistogram = Histogram.getXValues(image);
+		this.yHistogram = Histogram.getYValues(image);
 		System.out.println("X Values: \n");
-		Histogram.showXHistogram(xValues, image.getType());
-		Histogram.showYHistogram(yValues, image.getType());
-		System.out.println(Arrays.toString(xValues));
+		Histogram.showXHistogram(xHistogram, image.getType());
+		Histogram.showYHistogram(yHistogram, image.getType());
+		System.out.println(Arrays.toString(xHistogram));
 		performSegmentation();
 		// TODO finish segmentation here
 		
@@ -74,10 +81,85 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 
 
 	private void defineBoundingBox() {
-		// TODO Auto-generated method stub
+		System.out.println("Define bounding box");
+		drawHistogramDistribution();
+		int blankValueTreshold = getBlankThreshold();
+		int[] xRange = getxRange();
+		int[] yRange = getyRange();
 		
 	}
 
+	
+	private void drawHistogramDistribution() {
+		int min = getMin(this.xHistogram);
+		int max = getMax(this.xHistogram);
+		int limit = max - min;
+		System.out.println("Min, max, limit: "+min+", "+max+", "+limit);
+		double[] distribution = new double[limit];
+	
+		int levelsGroup[] = new int[this.xHistogram.length];
+		
+		
+//		System.out.println("Levels: " + Arrays.toString(levels));
+//		System.out.println("Distribution: " + Arrays.toString(distribution));
+
+
+		
+		System.out.println("Distribution: " + Arrays.toString(distribution));
+		System.out.println(Arrays.toString(levelsGroup));
+		
+		
+		
+	}
+
+
+	private int getBlankThreshold() {
+		
+		for (int i = 0; i < this.xHistogram.length; i++) {
+			
+		}
+		return 0;
+	}
+
+
+	private int[] getyRange() {
+		// get left limit
+		
+		return null;
+	}
+
+
+	private int[] getxRange() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	private int getMin(int[] histogram) {
+		int min = Integer.MAX_VALUE;
+		for (int i = 0; i < histogram.length; i++) {
+			if(histogram[i] < min) {
+				min = histogram[i];
+			}
+		}
+		
+		return min;
+	}
+	
+	
+
+	private int getMax(int[] histogram) {
+		int max = -Integer.MAX_VALUE;
+		for (int i = 0; i < histogram.length; i++) {
+			if(histogram[i] > max) {
+				max = histogram[i];
+			}
+		}
+		
+		return max;
+	}
+	
+	
 	
 	
 }

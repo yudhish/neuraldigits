@@ -11,6 +11,7 @@ import hr.fer.zemris.nd.document.util.enums.EResolutionUnit;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author goran
@@ -20,7 +21,7 @@ public class OcrScheme {
 	private int width;
 	private int height;
 	private List<RectangularArea> interestAreas;
-	
+	private Map<RectangularArea, String> interestAreaValue;
 	
 	
 	public OcrScheme(int width, int height) {
@@ -33,6 +34,7 @@ public class OcrScheme {
 		this.interestAreas = new ArrayList<RectangularArea>();
 	}
 	
+
 	
 	public OcrScheme(EPaperSize size, int resolution, EResolutionUnit resolutionUnit) {
 		double dotsperMM = calculateDPMM(resolution, resolutionUnit);
@@ -86,6 +88,11 @@ public class OcrScheme {
 		default:
 			return -1;
 		}
+	}
+	
+	
+	public void addAreaNumber(RectangularArea area, String value) {
+		this.interestAreaValue.put(area, value);
 	}
 	
 	
