@@ -20,6 +20,7 @@ public class ImageDisplay {
 	private BufferedImageDrawer imageDrawer;
 	private JFrame frame;
 	
+	
 	public ImageDisplay(BufferedImage image) {
 		this.image = image;
 		this.imageDrawer = new BufferedImageDrawer(image);
