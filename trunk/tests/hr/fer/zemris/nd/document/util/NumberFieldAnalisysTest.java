@@ -31,6 +31,9 @@ public class NumberFieldAnalisysTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		
+		
 		System.out.println("Image loaded. ");
 		
 		NumberField field = new NumberField(image);
