@@ -1,0 +1,6 @@
+package hr.fer.zemris.nd.document.util.enums;
+
+public enum AxisOrientation {
+	XY,
+	YX
+}
