@@ -62,4 +62,15 @@ public class OcrDocument {
 	}
 	
 	
+	/**
+	 * Changes to the number fields list and elements performed via this reference will be
+	 * saved in the OcrDocument too. 
+	 * 
+	 * @return
+	 */
+	public List<NumberField> getNumberFields() {
+		return this.numberFields;
+	}
+	
+	
 }
