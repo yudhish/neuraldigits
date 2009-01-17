@@ -41,14 +41,14 @@ public class DoubleCoordinate {
 	 * @param y y coordinate
 	 */
 	public DoubleCoordinate(double x, double y) {
-		if(x < 0) {
+		/*if(x < 0) {
 			throw new IllegalArgumentException("The x coordinate needs to be " +
 					"an integer, greater than or equal to zero. ");
 		}
 		if(x < 0) {
 			throw new IllegalArgumentException("The x coordinate needs to be " +
 					"an integer, greater than or equal to zero. ");
-		}
+		}*/
 		
 		this.x = x;
 		this.y = y;
