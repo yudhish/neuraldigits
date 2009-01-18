@@ -18,25 +18,28 @@ import sun.util.BuddhistCalendar;
 
 public class EdgeDigitAnaliser implements IDigitAnaliser {
 
-	private List<BufferedImage> originalDigits=null;
+	private List<BufferedImage> digitImages=null;
 
 	
 	int[] buffer=new int[4];
 	
 	
 	public EdgeDigitAnaliser(List<BufferedImage> digits){
-		this.originalDigits=new ArrayList<BufferedImage>(digits);		
+		this.digitImages=new ArrayList<BufferedImage>(digits);		
 	}
 	
 	public EdgeDigitAnaliser(BufferedImage numberField, List<RectangularArea> boundingBoxes){
-		this.originalDigits=new ArrayList<BufferedImage>();
-		this.originalDigits.clear();
+		this.digitImages=new ArrayList<BufferedImage>();
+		this.digitImages.clear();
+			
+		
 		for(RectangularArea currentDigitBox:boundingBoxes){
 			BufferedImage newImage=numberField.getSubimage(currentDigitBox.getTopLeft().getX(),
 															currentDigitBox.getTopLeft().getY(),
 															currentDigitBox.getWidth(),
 															currentDigitBox.getHeight());
-			originalDigits.add(newImage);
+			digitImages.add(newImage);
+			
 		}		
 		
 	}
@@ -61,7 +64,7 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 		List<DoubleCoordinate> rightInnerBorders = new ArrayList<DoubleCoordinate>();
 		
 		//GETTING OUTER BOUNDS
-		for(int i=0;i<originalDigits.size();i++){
+		for(int i=0;i<digitImages.size();i++){
 		
 		
 			int topOrdinate=getTopOrdinate(i);
@@ -108,7 +111,7 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 		
 		//GETTING INNER BOUNDS
 		
-		for(int i=0;i<originalDigits.size();i++){
+		for(int i=0;i<digitImages.size();i++){
 			
 			
 			int topInnerOrdinate=aproachLineFromBottom(i, topOrdinate+(bottomOrdinate-topOrdinate)/4);
@@ -171,7 +174,7 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 		
 	
 		//only for testing
-		for(BufferedImage digit:originalDigits){
+		for(BufferedImage digit:digitImages){
 			WritableRaster r=digit.getRaster();
 			buffer[0]=0;
 			for(int i=0;i<r.getWidth();i++){
@@ -212,12 +215,11 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 		
 		return retTransformer;
 	}
-
 	
 	
 	private int getTopOrdinate(int digitIndex){
 		double treshold=220;
-		BufferedImage digit=originalDigits.get(digitIndex);
+		BufferedImage digit=digitImages.get(digitIndex);
 		Raster r=digit.getRaster();
 		for(int i=0;i<r.getHeight();i++){
 			double avg=middleValueOnOrdinate(digitIndex, i);
@@ -230,7 +232,7 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 	
 	private int getBottomOrdinate(int digitIndex){
 		double treshold=220;
-		BufferedImage digit=originalDigits.get(digitIndex);
+		BufferedImage digit=digitImages.get(digitIndex);
 		Raster r=digit.getRaster();
 		for(int i=r.getHeight()-1;i>=0;i--){
 			double avg=middleValueOnOrdinate(digitIndex, i);
@@ -293,7 +295,7 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 	
 	private int aproachPointFromLeft(int digitIndex, int ordinate, int offset){
 		double treshold=140;
-		Raster r=originalDigits.get(digitIndex).getRaster();
+		Raster r=digitImages.get(digitIndex).getRaster();
 		
 		for(int i=0;i<r.getWidth();i++){
 			int sum=0;
@@ -312,7 +314,7 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 	
 	private int aproachPointFromRight(int digitIndex, int ordinate, int offset){
 		double treshold=140;
-		Raster r=originalDigits.get(digitIndex).getRaster();
+		Raster r=digitImages.get(digitIndex).getRaster();
 		
 		for(int i=r.getWidth()-1;i>=0;i--){
 			int sum=0;
@@ -333,7 +335,7 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 		double diferentialTreshold=15;
 		
 		double oldAvg=middleValueOnYXLine(digitIndex, initialLine);
-		Raster r=originalDigits.get(digitIndex).getRaster();
+		Raster r=digitImages.get(digitIndex).getRaster();
 		
 		for(double i=initialLine.getY();i<r.getWidth()+100;i=i+1){
 			initialLine.setY(i);
@@ -368,7 +370,7 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 	
 	private int aproachLineFromTop(int digitIndex, int initialOrdinate){
 		double diferentialTreshold=15;
-		Raster r=originalDigits.get(digitIndex).getRaster();
+		Raster r=digitImages.get(digitIndex).getRaster();
 		
 		double oldAvg=middleValueOnOrdinate(digitIndex, initialOrdinate);
 		
@@ -405,7 +407,7 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 		
 		int sum=0;
 		int count=0;
-		Raster r=originalDigits.get(digitIndex).getRaster();
+		Raster r=digitImages.get(digitIndex).getRaster();
 		
 		for(int j=0;j<r.getHeight();j++){
 			int i=(int)(line.getX()*j+line.getY());
@@ -424,24 +426,15 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 	private double middleValueOnOrdinate(int digitIndex, int ordinate ){
 		
 		int sum=0;
-		Raster r=originalDigits.get(digitIndex).getRaster();
+		Raster r=digitImages.get(digitIndex).getRaster();
 		for(int i=0;i<r.getWidth();i++){
 			r.getPixel(i, ordinate, buffer);
 			sum+=buffer[0];
 		}
 		
 		return (double)sum/r.getWidth();
-	}
+	}	
 	
-	
-	
-	private int filter(int value){
-		return value;
-	}
-	
-	private boolean treshold(int value){
-		return value<100;
-	}
 	
 	private double getAvg(List<Integer> values){
 		double sum=0;
@@ -458,6 +451,8 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 		}
 		return distance/(double)values.size();
 	}
+	
+	
 	
 	
 	
