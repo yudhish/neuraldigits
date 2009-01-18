@@ -10,6 +10,7 @@ import hr.fer.zemris.nd.document.util.enums.EResolutionUnit;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +33,7 @@ public class OcrScheme {
 		this.width = width;
 		this.height = height;
 		this.interestAreas = new ArrayList<RectangularArea>();
+		this.interestAreaValue = new HashMap<RectangularArea, String>();
 	}
 	
 
@@ -94,6 +96,17 @@ public class OcrScheme {
 	public void addAreaNumber(RectangularArea area, String value) {
 		this.interestAreaValue.put(area, value);
 	}
+	
+	
+	public String getAreaName(RectangularArea area) {
+		return this.interestAreaValue.get(area);
+	}
+	
+	
+	public List<RectangularArea> getInterestAreas() {
+		return this.interestAreas;
+	}
+	
 	
 	
 	public String toString() {
