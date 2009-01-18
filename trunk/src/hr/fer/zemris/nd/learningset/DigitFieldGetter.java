@@ -6,12 +6,15 @@ package hr.fer.zemris.nd.learningset;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+import hr.fer.zemris.nd.document.DigitField;
 import hr.fer.zemris.nd.document.NumberField;
 import hr.fer.zemris.nd.document.NumberFieldScheme;
 import hr.fer.zemris.nd.document.OcrDocument;
@@ -27,49 +30,65 @@ public class DigitFieldGetter {
 	private NumberFieldScheme scheme;
 	private File inFolderLocation;
 	private File outFolderLocation;
+	private List<File> directoriesToProcess;
 	
 	public DigitFieldGetter(NumberFieldScheme scheme, File inputFolderLocation, 
 			File outFolderLocation) {
 		this.scheme = scheme;
 		this.inFolderLocation = inputFolderLocation;
 		this.outFolderLocation = outFolderLocation;
+		this.directoriesToProcess = new ArrayList<File>();
 	}
 	
 	
 	public void getDigitFields() {
-		File[] imageFiles = inFolderLocation.listFiles();
-//		System.out.println(Arrays.toString(imageFiles));
-		
-		for (int i = 0; i < imageFiles.length; i++) {
+		addDirectoriesToProcess(this.inFolderLocation);
+		System.out.println("Processing the following direstories: "+this.directoriesToProcess);
+		for (File folder: directoriesToProcess) {
 			try {
-				
-				BufferedImage image = ImageIO.read(imageFiles[i]);
-//				OcrDocument document = new OcrDocument(image, scheme);
-				int counter = 0;
-				for (int j = 0; j < scheme.getInterestAreasNumber(); j++) {
-					counter++;
-					System.out.println(
-							"Processing numberField "+counter+" of "+imageFiles[i].getName());
-//					NumberField field = document.getNumberField(j);
-					RectangularArea area = scheme.getInterestArea(j);
-//					String name = scheme.getAreaName(area);
-					
-//					File outFolder = new File(this.outFolderLocation, name);
-//					if(!outFolder.exists()) {
-//						System.out.println(outFolder.mkdir());
-//					}
-//					
-//					
-//					File outFile = new File(outFolder, imageFiles[i].getName());
-//					outFile = checkExistence(outFile, outFolder);
-//					System.out.println("Writing numberField to "+outFile);
-//					ImageIO.write(field.getImage(), "png", outFile);
-				}
+				System.out.println("Processing: "+folder.getCanonicalPath());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+//			processFields(folder);
+		}
+	}
+
+
+	private void processFields(File folder) {
+		File[] files = folder.listFiles();
+		File outFolder = checkExistence(new File(this.outFolderLocation, 
+				folder.getName()), this.outFolderLocation);
+		
+		for (int i = 0; i < files.length; i++) {
+			if(files[i].isFile()) {
+				BufferedImage image;
+				System.out.println("Saving digit to "+outFolder);
+//				try {
+//					image = ImageIO.read(files[i]);
+//					NumberField field = new NumberField(image);
+//					for (DigitField digitField: field.getDigitFields()) {
+//						ImageIO.write(digitField.getDigitImage(), "png", outFolder);
+//					}
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+				
+			}
+		}
+		
+	}
+
+
+	private void addDirectoriesToProcess(File folder) {
+		File[] files = folder.listFiles();
+		for (int i = 0; i < files.length; i++) {
+			if(files[i].isDirectory()) {
+				this.directoriesToProcess.add(files[i]);
+				addDirectoriesToProcess(files[i]);
+			}
 		}
 		
 	}
