@@ -98,50 +98,7 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 	}
 
 
-	private void removeNoise(BufferedImage image2, int distance, double threshold) {
-		int[] pixelValue = new int[1];
-		int[] pixelWhite = new int[]{255};
-		for(int i = 0; i < this.image.getWidth(); i++) {
-			for(int j = 0; j < this.image.getHeight(); j++) {
-				if(image2.getRaster().getPixel(i, j, pixelValue)[0] == 0) {
-					System.out.println(getNeighbourPixelCount(image2, distance, i, j));
-					if(getNeighbourPixelCount(image2, distance, i, j) < 
-							threshold * Math.pow(distance, 2)) {
-						image2.getRaster().setPixel(i, j, pixelWhite);
-					}
-				}
-				
-			}
-		}
-		
-	}
 
-
-	private double getNeighbourPixelCount(BufferedImage image2, int distance, int x, int y) {
-		int count = 0;
-		int[] pixelValue = new int[1];
-		for(int i = 0; i < distance; i++) {
-			if(image2.getRaster().getPixel(x+i, y, pixelValue)[0] == 0) {
-				count++;
-			}
-			if(image2.getRaster().getPixel(x-i, y, pixelValue)[0] == 0) {
-				count++;
-			}
-			if(image2.getRaster().getPixel(x+i, y, pixelValue)[0] == 0) {
-				count++;
-			}
-			if(image2.getRaster().getPixel(x-i, y, pixelValue)[0] == 0) {
-				count++;
-			}
-			if(image2.getRaster().getPixel(x, y+i, pixelValue)[0] == 0) {
-				count++;
-			}
-			if(image2.getRaster().getPixel(x, y-i, pixelValue)[0] == 0) {
-				count++;
-			}
-		}
-		return count;
-	}
 
 
 	@Override

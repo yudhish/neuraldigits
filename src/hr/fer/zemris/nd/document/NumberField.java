@@ -27,11 +27,13 @@ public class NumberField {
 	private BufferedImage scan;
 	private NumberFieldScheme scheme;
 	private List<DigitField> digits;
+	private ENumberFieldDisplayMode displayMode;
 	
 	
 	public NumberField(BufferedImage numberImage) {
 		this.scan = numberImage;
 		this.digits = new ArrayList<DigitField>();
+		this.displayMode = ENumberFieldDisplayMode.VERBOSE;
 		createScheme();
 		createSegments();
 		
@@ -44,9 +46,13 @@ public class NumberField {
 		this.scan = numberImage;
 		this.scheme = scheme;
 		this.digits = new ArrayList<DigitField>();
+		this.displayMode = ENumberFieldDisplayMode.VERBOSE;
 		createSegments();
 		
 	}
+	
+	
+	
 	
 	
 	private void createScheme() {
@@ -109,6 +115,9 @@ public class NumberField {
 	}
 	
 	
+	public void setDisplayMode(ENumberFieldDisplayMode mode) {
+		this.displayMode = mode;
+	}
 	
 
 
@@ -117,5 +126,12 @@ public class NumberField {
 	 */
 	public BufferedImage getImage() {
 		return scan;
+	}
+
+
+
+
+	public List<DigitField> getDigitFields() {
+		return this.digits;
 	}
 }
