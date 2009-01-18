@@ -3,6 +3,8 @@
  */
 package hr.fer.zemris.nd.document.util;
 
+import hr.fer.zemris.nd.document.DigitField;
+import hr.fer.zemris.nd.document.ENumberFieldDisplayMode;
 import hr.fer.zemris.nd.document.NumberField;
 import hr.fer.zemris.nd.imagelib.Picture;
 
@@ -26,7 +28,7 @@ public class NumberFieldAnalisysTest {
 		System.out.println("Loading image.");
 		try {
 			image = ImageIO.read(new File(
-					"/home/goran/Desktop/PrazniProcessed/Page one/p0000001.png"));
+					"/home/goran/Desktop/p0000001.png"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -37,7 +39,17 @@ public class NumberFieldAnalisysTest {
 		
 		System.out.println("Image loaded. ");
 		
-		NumberField field = new NumberField(image);
+		NumberField field = new NumberField(image, ENumberFieldDisplayMode.VERBOSE);
+		String name = "/home/goran/Desktop/folder/name";
+		for(DigitField digit: field.getDigitFields()) {
+			try {
+				ImageIO.write(digit.getDigitImage(), "png", new File(name));
+				name += "1";
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		System.out.println("Field initialzed");
 		
 	}
