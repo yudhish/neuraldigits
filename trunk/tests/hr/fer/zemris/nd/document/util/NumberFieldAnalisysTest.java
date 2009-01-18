@@ -26,7 +26,7 @@ public class NumberFieldAnalisysTest {
 		System.out.println("Loading image.");
 		try {
 			image = ImageIO.read(new File(
-					"/home/goran/Desktop/PrazniProcessed/Page two/p0000002712.png"));
+					"/home/goran/Desktop/PrazniProcessed/Page one/p0000001.png"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
