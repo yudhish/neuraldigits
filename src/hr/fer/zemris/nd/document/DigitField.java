@@ -119,6 +119,10 @@ public class DigitField {
 		List<Double> values=new ArrayList<Double>();
 		
 		ESegment[] segments = ESegment.values();
+		
+		double min=1;
+		double max=0;
+		double avg=0;
 		for(ESegment segment:segments){		
 			RectangularArea rect=scheme.getSegmentBox(segment);
 		
@@ -126,8 +130,9 @@ public class DigitField {
 														rect.getTopLeft().getY(),
 														rect.getWidth(),
 														rect.getHeight());
-		
+			
 			double sum=0;
+			double value=0;
 			Raster r=segmentImage.getRaster();
 			for(int i=0;i<r.getWidth();i++){
 				for (int j=0;j<r.getHeight();j++){
@@ -136,8 +141,32 @@ public class DigitField {
 				}
 			}
 			
-			values.add(sum/(double)(r.getWidth()*r.getHeight()));
+			value=sum/(double)(r.getWidth()*r.getHeight());
+			
+			if(value<min){
+				min=value;			
+			}
+			
+			if( value>max){
+				max=value;
+			}
+			
+			avg=avg+value;
+			
+			values.add(value);
 		}
+		
+		avg=avg/7;
+		
+		double dev=(max-avg);
+		if((avg-min)>dev){
+			dev=avg-min;
+		}
+		
+		System.out.println("Max: "+max);
+		System.out.println("Min: "+ min);
+		System.out.println("Avg: "+ avg);
+		System.out.println("MaxDev: " +dev );
 		
 		return values;		
 	}

@@ -101,7 +101,7 @@ public class Picture {
 		
 		System.out.println("Avg: "+avg);
 		
-		int treshold=avg-3*(max-avg)/4;
+		int treshold=avg+25;/*avg;*/
 		
 		System.out.println("Treshold: "+treshold);
 		
@@ -138,8 +138,35 @@ public class Picture {
 	}
 	
 	public static BufferedImage doAntialiasing(BufferedImage image, int depth){
-		return null;
 		
+		Raster raster=image.getRaster();
+		
+		BufferedImage newImage=new BufferedImage(image.getWidth(),image.getHeight(),BufferedImage.TYPE_BYTE_GRAY);
+		WritableRaster wRaster=newImage.getRaster();
+		
+		for(int i=0;i<wRaster.getWidth();i++){
+			for(int j=0;j<wRaster.getHeight();j++){
+				int sum=0;
+				int count=0;
+				for(int k=i-depth;k<=i+depth;k++){
+					if(k<0 || k>=wRaster.getWidth()){
+						continue;
+					}
+					for(int l=j-depth;l<=j+depth;l++){
+						if(l<0 || l>=wRaster.getHeight()){
+							continue;
+						}
+						raster.getPixel(k, l, buffer);
+						sum+=buffer[0];
+						count++;
+					}
+				}
+				buffer[0]=sum/count;
+				wRaster.setPixel(i, j, buffer);
+			}
+		}
+		
+		return newImage;	
 		
 	}
 	
