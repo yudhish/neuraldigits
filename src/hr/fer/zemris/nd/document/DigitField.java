@@ -11,6 +11,8 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -26,6 +28,7 @@ public class DigitField {
 	 */
 	private BufferedImage digitImage;
 	private DigitFieldScheme scheme;
+	int[] buffer=new int[4];
 	
 	
 	/**
@@ -98,7 +101,7 @@ public class DigitField {
 		
 		Image original=digitImage;
 		
-		BufferedImage image=new BufferedImage(width,height,BufferedImage.TYPE_BYTE_GRAY);
+		BufferedImage image=new BufferedImage(width,height,BufferedImage.TYPE_BYTE_BINARY);
 		Graphics2D bg = image.createGraphics();
 		bg.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 		         RenderingHints.VALUE_INTERPOLATION_BICUBIC);
@@ -107,10 +110,36 @@ public class DigitField {
 		bg.drawImage(original, 0, 0, null);
 		bg.dispose();
 		
-		return image;
-		   
+		return image;		
 		
+	}
+	
+	public List<Double> getSegmentSaturatins(){
 		
+		List<Double> values=new ArrayList<Double>();
+		
+		ESegment[] segments = ESegment.values();
+		for(ESegment segment:segments){		
+			RectangularArea rect=scheme.getSegmentBox(segment);
+		
+			BufferedImage segmentImage=digitImage.getSubimage(rect.getTopLeft().getX(),
+														rect.getTopLeft().getY(),
+														rect.getWidth(),
+														rect.getHeight());
+		
+			double sum=0;
+			Raster r=segmentImage.getRaster();
+			for(int i=0;i<r.getWidth();i++){
+				for (int j=0;j<r.getHeight();j++){
+					r.getPixel(i, j, buffer);
+					sum+=(double)buffer[0]/255;
+				}
+			}
+			
+			values.add(sum/(double)(r.getWidth()*r.getHeight()));
+		}
+		
+		return values;		
 	}
 	
 	
