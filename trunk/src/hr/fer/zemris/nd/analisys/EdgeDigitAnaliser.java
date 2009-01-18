@@ -6,6 +6,7 @@ import hr.fer.zemris.nd.document.util.DoubleCoordinate;
 import hr.fer.zemris.nd.document.util.RectangularArea;
 import hr.fer.zemris.nd.document.util.enums.AxisOrientation;
 import hr.fer.zemris.nd.gui.ImageDisplay;
+import hr.fer.zemris.nd.imagelib.Picture;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,13 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 	
 	
 	public EdgeDigitAnaliser(List<BufferedImage> digits){
-		this.digitImages=new ArrayList<BufferedImage>(digits);		
+		this.digitImages=new ArrayList<BufferedImage>();
+		for(BufferedImage newImage:digits){
+			newImage=Picture.doAntialiasing(newImage, 1);
+			newImage=Picture.automaticSigmoidalTransform(newImage, 50);
+			digitImages.add(newImage);
+			new ImageDisplay(newImage);
+		}
 	}
 	
 	public EdgeDigitAnaliser(BufferedImage numberField, List<RectangularArea> boundingBoxes){
@@ -38,6 +45,8 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 															currentDigitBox.getTopLeft().getY(),
 															currentDigitBox.getWidth(),
 															currentDigitBox.getHeight());
+			newImage=Picture.doAntialiasing(newImage, 1);
+			newImage=Picture.automaticSigmoidalTransform(newImage, 50);
 			digitImages.add(newImage);
 			
 		}		
@@ -218,7 +227,7 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 	
 	
 	private int getTopOrdinate(int digitIndex){
-		double treshold=220;
+		double treshold=230;
 		BufferedImage digit=digitImages.get(digitIndex);
 		Raster r=digit.getRaster();
 		for(int i=0;i<r.getHeight();i++){
@@ -231,7 +240,7 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 	}
 	
 	private int getBottomOrdinate(int digitIndex){
-		double treshold=220;
+		double treshold=230;
 		BufferedImage digit=digitImages.get(digitIndex);
 		Raster r=digit.getRaster();
 		for(int i=r.getHeight()-1;i>=0;i--){
@@ -294,7 +303,7 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 	}
 	
 	private int aproachPointFromLeft(int digitIndex, int ordinate, int offset){
-		double treshold=140;
+		double treshold=200;
 		Raster r=digitImages.get(digitIndex).getRaster();
 		
 		for(int i=0;i<r.getWidth();i++){
@@ -313,7 +322,7 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 	}
 	
 	private int aproachPointFromRight(int digitIndex, int ordinate, int offset){
-		double treshold=140;
+		double treshold=200;
 		Raster r=digitImages.get(digitIndex).getRaster();
 		
 		for(int i=r.getWidth()-1;i>=0;i--){
