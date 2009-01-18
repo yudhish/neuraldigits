@@ -35,7 +35,7 @@ public class OcrDocumentTest {
 		
 		OcrDocument document = new OcrDocument(image, scheme);
 		NumberField field = document.getNumberField(0);
-		BufferedImage fieldImage = field.getScan();
+		BufferedImage fieldImage = field.getImage();
 		File fieldImageFile = new File("fieldImage.png");
 		try {
 			ImageIO.write(fieldImage, "png", fieldImageFile);

@@ -4,6 +4,7 @@
 package hr.fer.zemris.nd.document.util;
 
 import hr.fer.zemris.nd.document.NumberField;
+import hr.fer.zemris.nd.imagelib.Picture;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -25,12 +26,12 @@ public class NumberFieldAnalisysTest {
 		System.out.println("Loading image.");
 		try {
 			image = ImageIO.read(new File(
-					"/media/data/Documents/fer/Peta godina/Deveti semestar/" +
-					"Neuronske mreze/Neuronske mreze uzorci rani/scan01.png"));
+					"/home/goran/Desktop/PrazniProcessed/Page two/p0000002712.png"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		System.out.println("Average: "+Picture.getImagePixelAverage(image));
 		
 		
 		
