@@ -17,7 +17,8 @@ public class GetSamples {
 	public static void main(String[] args) {
 		File inFolder = new File("/home/goran/Desktop/processedBUBII");
 	    File outFolder = new File("/home/goran/Desktop/Samples");
-//	    DigitFieldGetter getter = new DigitFieldGetter(inFolder, outFolder)
+	    DigitFieldGetter getter = new DigitFieldGetter(inFolder, outFolder);
+	    getter.getDigitFields();
 
 	}
 

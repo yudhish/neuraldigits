@@ -33,20 +33,28 @@ public class NumberField {
 	public NumberField(BufferedImage numberImage) {
 		this.scan = numberImage;
 		this.digits = new ArrayList<DigitField>();
-		this.displayMode = ENumberFieldDisplayMode.VERBOSE;
+		this.displayMode = ENumberFieldDisplayMode.NONE;
 		createScheme();
 		createSegments();
 		
 	}
 	
 	
+	public NumberField(BufferedImage numberImage, ENumberFieldDisplayMode mode) {
+		this.scan = numberImage;
+		this.digits = new ArrayList<DigitField>();
+		this.displayMode = mode;
+		createScheme();
+		createSegments();
+		
+	}
 	
 
 	public NumberField(BufferedImage numberImage, NumberFieldScheme scheme) {
 		this.scan = numberImage;
 		this.scheme = scheme;
 		this.digits = new ArrayList<DigitField>();
-		this.displayMode = ENumberFieldDisplayMode.VERBOSE;
+		this.displayMode = ENumberFieldDisplayMode.NONE;
 		createSegments();
 		
 	}
@@ -56,16 +64,21 @@ public class NumberField {
 	
 	
 	private void createScheme() {
-		System.out.println("Initializing scheme.");
+//		System.out.println("Initializing scheme.");
 		this.scheme = new NumberFieldScheme(this.scan.getWidth(), this.scan.getHeight());
 		
-		ImageDisplay.displayImage(this.scan, new Point(150, 0));
+		if(this.displayMode == ENumberFieldDisplayMode.VERBOSE || 
+				this.displayMode == ENumberFieldDisplayMode.SINGLE_WINDOW) {
+			ImageDisplay.displayImage(this.scan, new Point(150, 0));
+		}
+		
 		
 		NumberFieldScheme histogramAnalisysScheme = 
 			this.getHistogramAnalisysScheme();
-		NumberFieldScheme edgeDetectionScheme = getEdgeDetectionScheme();
-		System.out.println("Histogram analisys scheme: \n"+histogramAnalisysScheme);
-		System.out.println();
+		this.scheme = histogramAnalisysScheme;
+//		NumberFieldScheme edgeDetectionScheme = getEdgeDetectionScheme();
+//		System.out.println("Histogram analisys scheme: \n"+histogramAnalisysScheme);
+//		System.out.println();
 		System.out.println(scheme);
 		
 	}
@@ -81,7 +94,8 @@ public class NumberField {
 
 
 	private NumberFieldScheme getHistogramAnalisysScheme() {
-		HistogramMinimaAnaliser analyser = new HistogramMinimaAnaliser(this.scan);
+		HistogramMinimaAnaliser analyser = new HistogramMinimaAnaliser(
+				this.scan, this.displayMode);
 		NumberFieldScheme scheme = new NumberFieldScheme(
 				this.scan.getWidth(), this.scan.getHeight());
 		for(RectangularArea area: analyser.getDigitAreas()) {
