@@ -1,5 +1,6 @@
 package hr.fer.zemris.nd.analisys;
 
+import hr.fer.zemris.nd.document.DigitField;
 import hr.fer.zemris.nd.document.util.Coordinate;
 import hr.fer.zemris.nd.document.util.DoubleCoordinate;
 import hr.fer.zemris.nd.document.util.RectangularArea;
@@ -18,9 +19,7 @@ import sun.util.BuddhistCalendar;
 public class EdgeDigitAnaliser implements IDigitAnaliser {
 
 	private List<BufferedImage> originalDigits=null;
-	private List<BufferedImage> digits=new ArrayList<BufferedImage>();
-	private RectangularArea boundingBox=null;
-	private List<RectangularArea> segmentBoxes=null;	
+
 	
 	int[] buffer=new int[4];
 	
@@ -41,57 +40,50 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 		}		
 		
 	}
-	@Override
-	public RectangularArea getBoundingBox() {
-		if(boundingBox!=null){
-			return boundingBox;
-		}
-		
-		
-		
-			
-		
-		
-		return null;
-	}
-
-	@Override
-	public List<RectangularArea> getSegmentsBoxes() {
-		
-		if(segmentBoxes!=null){
-			return segmentBoxes;
-		}
-		return null;
-	}	
 	
-	public void align(){
+	@Override
+	public IDigitTransformer getDigitTransformer() {
+		
+				
+		EdgeDetectionDigitTransformer retTransformer= new EdgeDetectionDigitTransformer();
 		
 		List<Integer> topOrdinates= new ArrayList<Integer>();
 		List<Integer> bottomOrdinates= new ArrayList<Integer>();
+		List<Integer> topInnerOrdinates= new ArrayList<Integer>();
+		List<Integer> bottomInnerOrdinates= new ArrayList<Integer>();
+		List<Integer> middleTopOrdinates= new ArrayList<Integer>();
+		List<Integer> middleBottomOrdinates= new ArrayList<Integer>();
+		
+		
 		List<DoubleCoordinate> leftBorders = new ArrayList<DoubleCoordinate>();
 		List<DoubleCoordinate> rightBorders = new ArrayList<DoubleCoordinate>();
+		List<DoubleCoordinate> leftInnerBorders = new ArrayList<DoubleCoordinate>();
+		List<DoubleCoordinate> rightInnerBorders = new ArrayList<DoubleCoordinate>();
 		
+		//GETTING OUTER BOUNDS
 		for(int i=0;i<originalDigits.size();i++){
 		
-			BufferedImage digit=originalDigits.get(0);
 		
-			int topOrdinate=getTopOrdinate(0);
+			int topOrdinate=getTopOrdinate(i);
 			topOrdinates.add(topOrdinate);
 			
-			int bottomOrdinate=getBottomOrdinate(0);
+			int bottomOrdinate=getBottomOrdinate(i);
 			bottomOrdinates.add(bottomOrdinate);
+				
 		
-			DoubleCoordinate leftBorder=getLeftOuterLine(0, topOrdinate, bottomOrdinate);
+			DoubleCoordinate leftBorder=getLeftOuterLine(i, topOrdinate, bottomOrdinate);
 			leftBorders.add(leftBorder);
 			
-			DoubleCoordinate rightBorder=getRightOuterLine(0, topOrdinate, bottomOrdinate);
-			rightBorders.add(rightBorder);
-		
+			DoubleCoordinate rightBorder=getRightOuterLine(i, topOrdinate, bottomOrdinate);
+			rightBorders.add(rightBorder);		
 		
 		}
 		
 		int topOrdinate = (int)getAvg(topOrdinates);
 		int bottomOrdinate=(int)getAvg(bottomOrdinates);
+		
+		retTransformer.setTopBorderOrdinate(topOrdinate);
+		retTransformer.setBottomBorderOrdinate(bottomOrdinate);
 		
 		double direction=0;
 		double leftCut=0;
@@ -110,6 +102,73 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 		
 		DoubleCoordinate leftBorder=new DoubleCoordinate(direction,leftCut);
 		DoubleCoordinate rightBorder=new DoubleCoordinate(direction,rightCut);
+		
+		retTransformer.setLeftBorderLine(leftBorder);
+		retTransformer.setRightBorderLine(rightBorder);
+		
+		//GETTING INNER BOUNDS
+		
+		for(int i=0;i<originalDigits.size();i++){
+			
+			
+			int topInnerOrdinate=aproachLineFromBottom(i, topOrdinate+(bottomOrdinate-topOrdinate)/4);
+			topInnerOrdinates.add(topInnerOrdinate);
+			
+			int bottomInnerOrdinate=aproachLineFromTop(i, topOrdinate+3*(bottomOrdinate-topOrdinate)/4);
+			bottomInnerOrdinates.add(bottomInnerOrdinate);
+			
+			int middleTopOrdinate=aproachLineFromTop(i, topOrdinate+(bottomOrdinate-topOrdinate)/4);
+			middleTopOrdinates.add(middleTopOrdinate);
+			
+			int middleBottomOrdinate=aproachLineFromBottom(i, topOrdinate+3*(bottomOrdinate-topOrdinate)/4);
+			middleBottomOrdinates.add(middleBottomOrdinate);
+				
+		
+			DoubleCoordinate leftInnerBorder=aproachYXLineFromRight(i,
+					new DoubleCoordinate(leftBorder.getX(),(leftBorder.getY()+rightBorder.getY())/2));
+			leftInnerBorders.add(leftInnerBorder);
+			
+			DoubleCoordinate rightInnerBorder=aproachYXLineFromLeft(i,
+					new DoubleCoordinate(leftBorder.getX(),(leftBorder.getY()+rightBorder.getY())/2));
+			rightInnerBorders.add(rightInnerBorder);		
+		
+		}
+		
+		int topInnerOrdinate = (int)getAvg(topInnerOrdinates);
+		int bottomInnerOrdinate=(int)getAvg(bottomInnerOrdinates);
+		int middleTopOrdinate = (int)getAvg(middleTopOrdinates);
+		int middleBottomOrdinate=(int)getAvg(middleBottomOrdinates);
+		
+		double leftInnerCut=0;
+		double rightInnerCut=0;
+		
+		for(int i=0;i<leftInnerBorders.size();i++){
+			leftInnerCut+=leftInnerBorders.get(i).getY();
+			rightInnerCut+=rightInnerBorders.get(i).getY();
+		}
+		leftInnerCut=leftInnerCut/leftInnerBorders.size();
+		rightInnerCut=rightInnerCut/leftInnerBorders.size();
+		
+		DoubleCoordinate leftInnerBorder=new DoubleCoordinate(direction,leftInnerCut);
+		DoubleCoordinate rightInnerBorder=new DoubleCoordinate(direction,rightInnerCut);
+		
+		int middleCenterOrdinate=middleTopOrdinate+(middleBottomOrdinate-middleTopOrdinate)/2-topOrdinate;
+		
+		int horizontalTicknessSum=middleBottomOrdinate-middleTopOrdinate+
+									topInnerOrdinate-topOrdinate+
+									bottomOrdinate-bottomInnerOrdinate;
+		int horizontalTickness=horizontalTicknessSum/3;
+		
+		double verticalTicknessSum=leftInnerCut-leftCut+
+								rightCut-rightInnerCut;
+		
+		verticalTicknessSum=verticalTicknessSum/Math.sqrt(1+direction*direction);
+		int verticalTickness=(int)verticalTicknessSum/2;
+		
+		retTransformer.setMiddleSegmentCenter(middleCenterOrdinate);
+		retTransformer.setHorizontalSegmentTickness(horizontalTickness);
+		retTransformer.setVerticalSegmentTickness(verticalTickness);
+		
 	
 		//only for testing
 		for(BufferedImage digit:originalDigits){
@@ -118,55 +177,40 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 			for(int i=0;i<r.getWidth();i++){
 				r.setPixel(i, topOrdinate, buffer);
 				r.setPixel(i, bottomOrdinate, buffer);
+				
+				r.setPixel(i, bottomInnerOrdinate, buffer);
+				r.setPixel(i, topInnerOrdinate, buffer);
+				r.setPixel(i, middleBottomOrdinate, buffer);
+				r.setPixel(i, middleTopOrdinate, buffer);
 			}
 		
 			for(int i=0; i< r.getHeight();i++){
 				double abscissaLeft=leftBorder.getX()*i+leftBorder.getY();
 				double abscissaRight=rightBorder.getX()*i+rightBorder.getY();
+				double abscissaLeftInner=leftInnerBorder.getX()*i+leftInnerBorder.getY();
+				double abscissaRightInner=rightInnerBorder.getX()*i+rightInnerBorder.getY();
+							
+				
 				if(abscissaLeft>0 && abscissaLeft <r.getWidth() ){
 					r.setPixel((int)abscissaLeft, i, buffer);
 				}
 				if(abscissaRight>0 && abscissaRight <r.getWidth() ){
 					r.setPixel((int)abscissaRight, i, buffer);
 				}
+				
+				if(abscissaLeftInner>0 && abscissaLeftInner <r.getWidth() ){
+					r.setPixel((int)abscissaLeftInner, i, buffer);
+				}
+				if(abscissaRightInner>0 && abscissaRightInner <r.getWidth() ){
+					r.setPixel((int)abscissaRightInner, i, buffer);
+				}
 			
 			}
-		
 			ImageDisplay disp=new ImageDisplay(digit);
-		}
-		int width=(int)(rightCut-leftCut);
-		int height=bottomOrdinate-topOrdinate;
-		Coordinate leftUpOrigin = new Coordinate((int)Math.round((double)topOrdinate*direction+leftCut),topOrdinate);
 		
-		for(BufferedImage digit:originalDigits){
-			BufferedImage newDigit=new BufferedImage(width,height,BufferedImage.TYPE_BYTE_GRAY);
-			WritableRaster wr=newDigit.getRaster();
-			Raster rr=digit.getRaster();
-		
-		
-			for(int i=0;i<width;i++){
-				for(int j=0;j<height;j++){
-					int x=leftUpOrigin.getX()+i+(int)(direction*j);
-					//protect
-					if(x<0) x=0;
-					if(x>rr.getWidth()-1) x=rr.getWidth()-1;
-					
-					int y=leftUpOrigin.getY()+j;
-					//protect
-					if(y<0) y=0;
-					if(y>rr.getHeight()-1) y=rr.getHeight()-1;
-					
-					rr.getPixel(x, y, buffer);
-					wr.setPixel(i, j, buffer);
-				}
-			}
-			digits.add(newDigit);
 		}
 		
-		//testing again
-		for(BufferedImage digit:digits){
-			ImageDisplay disp=new ImageDisplay(digit);
-		}
+		return retTransformer;
 	}
 
 	
@@ -176,12 +220,8 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 		BufferedImage digit=originalDigits.get(digitIndex);
 		Raster r=digit.getRaster();
 		for(int i=0;i<r.getHeight();i++){
-			int sum=0;
-			for(int j=0;j<r.getWidth();j++){
-				r.getPixel(j, i, buffer);
-				sum+=buffer[0];				
-			}
-			if((double)sum/r.getWidth()<treshold){
+			double avg=middleValueOnOrdinate(digitIndex, i);
+			if(avg<treshold){
 				return i;
 			}
 		}
@@ -193,12 +233,8 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 		BufferedImage digit=originalDigits.get(digitIndex);
 		Raster r=digit.getRaster();
 		for(int i=r.getHeight()-1;i>=0;i--){
-			int sum=0;
-			for(int j=0;j<r.getWidth();j++){
-				r.getPixel(j, i, buffer);
-				sum+=buffer[0];				
-			}
-			if((double)sum/r.getWidth()<treshold){
+			double avg=middleValueOnOrdinate(digitIndex, i);
+			if(avg<treshold){
 				return i;
 			}
 		}
@@ -215,13 +251,13 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 		List<Coordinate> points=new ArrayList<Coordinate>();
 		
 		for(int i=upperMiddleOrdinate-ordinateOffset;i<=upperMiddleOrdinate+ordinateOffset;i++){
-			int bound=aproachFromLeft(digitIndex, i, 2);
+			int bound=aproachPointFromLeft(digitIndex, i, 2);
 			Coordinate point=new Coordinate(bound,i);
 			points.add(point);
 		}
 		
 		for(int i=downMiddleOrdinate-ordinateOffset;i<=downMiddleOrdinate+ordinateOffset;i++){
-			int bound=aproachFromLeft(digitIndex, i, 2);
+			int bound=aproachPointFromLeft(digitIndex, i, 2);
 			Coordinate point=new Coordinate(bound,i);
 			points.add(point);
 		}
@@ -241,13 +277,13 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 		List<Coordinate> points=new ArrayList<Coordinate>();
 		
 		for(int i=upperMiddleOrdinate-ordinateOffset;i<=upperMiddleOrdinate+ordinateOffset;i++){
-			int bound=aproachFromRight(digitIndex, i, 2);
+			int bound=aproachPointFromRight(digitIndex, i, 2);
 			Coordinate point=new Coordinate(bound,i);
 			points.add(point);
 		}
 		
 		for(int i=downMiddleOrdinate-ordinateOffset;i<=downMiddleOrdinate+ordinateOffset;i++){
-			int bound=aproachFromRight(digitIndex, i, 2);
+			int bound=aproachPointFromRight(digitIndex, i, 2);
 			Coordinate point=new Coordinate(bound,i);
 			points.add(point);
 		}
@@ -255,7 +291,7 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 		return LinearRegresion.getAproximationLine(points, AxisOrientation.YX);
 	}
 	
-	private int aproachFromLeft(int digitIndex, int ordinate, int offset){
+	private int aproachPointFromLeft(int digitIndex, int ordinate, int offset){
 		double treshold=140;
 		Raster r=originalDigits.get(digitIndex).getRaster();
 		
@@ -274,7 +310,7 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 		return -1;
 	}
 	
-	private int aproachFromRight(int digitIndex, int ordinate, int offset){
+	private int aproachPointFromRight(int digitIndex, int ordinate, int offset){
 		double treshold=140;
 		Raster r=originalDigits.get(digitIndex).getRaster();
 		
@@ -291,128 +327,113 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 		}
 		
 		return -1;
-	}	
+	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	private int getTopOuterBound(int digitIndex, int digitAbscissa){
+	private DoubleCoordinate aproachYXLineFromLeft(int digitIndex, DoubleCoordinate initialLine){
+		double diferentialTreshold=15;
+		
+		double oldAvg=middleValueOnYXLine(digitIndex, initialLine);
 		Raster r=originalDigits.get(digitIndex).getRaster();
-		for(int i=0;i<r.getHeight();i++){
-			r.getPixel(digitAbscissa,i, buffer);
-			int value=buffer[0];
-			value=filter(value);
-			if(treshold(value)){
-				return i;
+		
+		for(double i=initialLine.getY();i<r.getWidth()+100;i=i+1){
+			initialLine.setY(i);
+			double avg=middleValueOnYXLine(digitIndex, initialLine);
+			double diff=oldAvg-avg;
+			System.out.println("From left diff= "+diff);
+			if(diff>diferentialTreshold){
+				return initialLine;
 			}
+			oldAvg=avg;
+		}		
+		return null;
+	}
+	
+	private DoubleCoordinate aproachYXLineFromRight(int digitIndex, DoubleCoordinate initialLine){
+		double diferentialTreshold=15;
+		
+		double oldAvg=middleValueOnYXLine(digitIndex, initialLine);
+		
+		for(double i=initialLine.getY();i>-100;i=i-0.5){
+			initialLine.setY(i);
+			double avg=middleValueOnYXLine(digitIndex, initialLine);
+			double diff=oldAvg-avg;
+			System.out.println("From right diff= "+diff);
+			if(diff>diferentialTreshold){
+				return initialLine;
+			}
+			oldAvg=avg;
+		}		
+		return null;
+	}
+	
+	private int aproachLineFromTop(int digitIndex, int initialOrdinate){
+		double diferentialTreshold=15;
+		Raster r=originalDigits.get(digitIndex).getRaster();
+		
+		double oldAvg=middleValueOnOrdinate(digitIndex, initialOrdinate);
+		
+		for(int j=initialOrdinate+1;j<r.getHeight();j++){
+			double avg=middleValueOnOrdinate(digitIndex, j);
+			double diff=oldAvg-avg;
+			System.out.println("From top diff= "+diff);
+			if(diff>diferentialTreshold){
+				return j;
+			}
+			oldAvg=avg;
 		}
 		return -1;
 	}
 	
-	private int getBottomOuterBound(int digitIndex, int digitAbscissa){
-		Raster r=originalDigits.get(digitIndex).getRaster();
-		for(int i=r.getHeight()-1;i>=0;i--){
-			r.getPixel(digitAbscissa,i, buffer);
-			int value=buffer[0];
-			value=filter(value);
-			if(treshold(value)){
-				return i;
+	private int aproachLineFromBottom(int digitIndex, int initialOrdinate){
+		double diferentialTreshold=15;
+				
+		double oldAvg=middleValueOnOrdinate(digitIndex, initialOrdinate);
+		
+		for(int j=initialOrdinate-1;j>=0;j--){
+			double avg=middleValueOnOrdinate(digitIndex, j);
+			double diff=oldAvg-avg;
+			System.out.println("From bottom diff= "+diff);
+			if(diff>diferentialTreshold){
+				return j;
 			}
+			oldAvg=avg;
 		}
 		return -1;
 	}
 	
-	private int getLeftInnerBound(int digitIndex, int digitOrdinate){
+	private double middleValueOnYXLine(int digitIndex, DoubleCoordinate line){
+		
+		int sum=0;
+		int count=0;
 		Raster r=originalDigits.get(digitIndex).getRaster();
-		int middle=r.getWidth()/2;
-		int testValue=0;
-		r.getPixel(middle,digitOrdinate, buffer);
-		testValue=buffer[0];
-		testValue=filter(testValue);
-		if(treshold(testValue)){
-			return -1;
+		
+		for(int j=0;j<r.getHeight();j++){
+			int i=(int)(line.getX()*j+line.getY());
+			//protect
+			if(i<0 || i>=r.getWidth()) continue;
+			count++;
+			r.getPixel(i, j, buffer);
+			sum+=buffer[0];
 		}
 		
-		for(int i=middle;i>=0;i--){
-			r.getPixel(i,digitOrdinate, buffer);
-			int value=buffer[0];
-			value=filter(value);
-			if(treshold(value)){
-				return i;
-			}
-		}
-		return -1;
+		if(count==0) return 0;
+		
+		return (double)sum/count;
 	}
 	
-	private int getRightInnerBound(int digitIndex, int digitOrdinate){
+	private double middleValueOnOrdinate(int digitIndex, int ordinate ){
+		
+		int sum=0;
 		Raster r=originalDigits.get(digitIndex).getRaster();
-		int middle=r.getWidth()/2;
-		int testValue=0;
-		r.getPixel(middle,digitOrdinate, buffer);
-		testValue=buffer[0];
-		testValue=filter(testValue);
-		if(treshold(testValue)){
-			return -1;
+		for(int i=0;i<r.getWidth();i++){
+			r.getPixel(i, ordinate, buffer);
+			sum+=buffer[0];
 		}
 		
-		for(int i=middle;i<r.getWidth();i++){
-			r.getPixel(i,digitOrdinate, buffer);
-			int value=buffer[0];
-			value=filter(value);
-			if(treshold(value)){
-				return i;
-			}
-		}
-		return -1;
+		return (double)sum/r.getWidth();
 	}
 	
-	private int getTopInnerBound(int digitIndex, int digitAbscissa, int startOrdinate){
-		Raster r=originalDigits.get(digitIndex).getRaster();
-		int testValue=0;
-		r.getPixel(digitAbscissa,startOrdinate, buffer);
-		testValue=buffer[0];
-		testValue=filter(testValue);
-		if(treshold(testValue)){
-			return -1;
-		}
-		
-		for(int i=startOrdinate;i>=0;i--){
-			r.getPixel(digitAbscissa,i, buffer);
-			int value=buffer[0];
-			value=filter(value);
-			if(treshold(value)){
-				return i;
-			}
-		}
-		return -1;
-	}
 	
-	private int getBottomInnerBound(int digitIndex, int digitAbscissa, int startOrdinate){
-		Raster r=originalDigits.get(digitIndex).getRaster();
-		int testValue=0;
-		r.getPixel(digitAbscissa,startOrdinate, buffer);
-		testValue=buffer[0];
-		testValue=filter(testValue);
-		if(treshold(testValue)){
-			return -1;
-		}
-		
-		for(int i=startOrdinate;i<r.getHeight();i++){
-			r.getPixel(digitAbscissa,i, buffer);
-			int value=buffer[0];
-			value=filter(value);
-			if(treshold(value)){
-				return i;
-			}
-		}
-		return -1;
-	}	
 	
 	private int filter(int value){
 		return value;
