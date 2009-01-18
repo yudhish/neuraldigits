@@ -112,7 +112,7 @@ public class NumberField {
 	/**
 	 * @return the scan
 	 */
-	public BufferedImage getScan() {
+	public BufferedImage getImage() {
 		return scan;
 	}
 }

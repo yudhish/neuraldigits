@@ -88,6 +88,19 @@ public class Histogram {
 	}
 	
 	
+	public static void showHorizontalHistogram(
+			int[] histogramArray, int imageType, Point location) {
+		int max = getMax(histogramArray);
+		int windowHeight = getXHistogramHeight(max);
+		double scale = (double)max/windowHeight;
+		System.out.println("skejla: "+scale);
+		BufferedImage histogramImage = Histogram.getHorizontalHistogramGraph(
+				histogramArray, windowHeight, scale, imageType);
+		ImageDisplay.displayImage(histogramImage, location);
+		
+	}
+	
+	
 	private static BufferedImage getHorizontalHistogramGraph(
 			int[] histogramArray, int windowHeight, double scale, int imageType) {
 		if(imageType != 10 && imageType != 12) {
