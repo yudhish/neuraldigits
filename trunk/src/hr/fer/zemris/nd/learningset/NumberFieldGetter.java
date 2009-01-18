@@ -41,7 +41,6 @@ public class NumberFieldGetter {
 		
 		for (int i = 0; i < imageFiles.length; i++) {
 			try {
-				
 				BufferedImage image = ImageIO.read(imageFiles[i]);
 				OcrDocument document = new OcrDocument(image, scheme);
 				int counter = 0;

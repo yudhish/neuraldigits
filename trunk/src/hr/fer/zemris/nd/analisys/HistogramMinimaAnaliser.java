@@ -3,6 +3,7 @@
  */
 package hr.fer.zemris.nd.analisys;
 
+import hr.fer.zemris.nd.document.ENumberFieldDisplayMode;
 import hr.fer.zemris.nd.document.util.Coordinate;
 import hr.fer.zemris.nd.document.util.RectangularArea;
 import hr.fer.zemris.nd.gui.ImageDisplay;
@@ -49,6 +50,7 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 	private int[] rangeX;
 	private int[] rangesY;
 	private ImageDisplay display;
+	private ENumberFieldDisplayMode displayMode;
 	
 	
 	
@@ -65,7 +67,38 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 		int avg = (int)Picture.getImagePixelAverage(image);
 
 		this.preprocessingImage = getPreprocessingImage(avg);
-		display = new ImageDisplay(displayImage);
+		if(this.displayMode == ENumberFieldDisplayMode.VERBOSE || 
+				this.displayMode == ENumberFieldDisplayMode.SINGLE_WINDOW) {
+			this.display = new ImageDisplay(displayImage);
+		}
+		
+//		removeNoise(preprocessingImage, 4, 0.1);
+//		removeNoise(preprocessingImage, 4, 0.1);
+//		removeNoise(preprocessingImage, 4, 0.1);
+//		removeNoise(preprocessingImage, 4, 0.1);
+		//display.repaint();
+
+		
+	}
+	
+	public HistogramMinimaAnaliser(BufferedImage image, ENumberFieldDisplayMode displayMode) {
+		this.image = image; 
+		this.displayImage = new BufferedImage(
+				image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+		displayImage.getGraphics().drawImage(image, 0, 0, null);
+		this.raster = image.getRaster();
+		
+		
+		int avg = (int)Picture.getImagePixelAverage(image);
+
+		this.displayMode = displayMode;
+		
+		this.preprocessingImage = getPreprocessingImage(avg);
+		if(this.displayMode == ENumberFieldDisplayMode.VERBOSE || 
+				this.displayMode == ENumberFieldDisplayMode.SINGLE_WINDOW) {
+			display = new ImageDisplay(displayImage);
+		}
+		
 		
 //		removeNoise(preprocessingImage, 4, 0.1);
 //		removeNoise(preprocessingImage, 4, 0.1);
@@ -103,13 +136,16 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 
 	@Override
 	public List<RectangularArea> getDigitAreas() {
-		System.out.println("Image type: "+this.image.getType());
+//		System.out.println("Image type: "+this.image.getType());
 		this.xHistogram = Histogram.getXValues(preprocessingImage);
 		this.yHistogram = Histogram.getYValues(preprocessingImage);
-		System.out.println("X Values: \n");
-		Histogram.showXHistogram(xHistogram, image.getType());
-		Histogram.showYHistogram(yHistogram, image.getType());
-		System.out.println(Arrays.toString(xHistogram));
+//		System.out.println("X Values: \n");
+		if(this.displayMode == ENumberFieldDisplayMode.VERBOSE) {
+			Histogram.showXHistogram(xHistogram, image.getType());
+			Histogram.showYHistogram(yHistogram, image.getType());
+		}
+		
+//		System.out.println(Arrays.toString(xHistogram));
 		performSegmentation();
 		// TODO finish segmentation here
 	
@@ -138,12 +174,14 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 
 
 	private void defineBoundingBox() {
-		System.out.println("Define bounding box");
+//		System.out.println("Define bounding box");
 		analyzeHistogramDistribution();
 		this.blankValueThreshold = getBlankThreshold();
 		this.yBlankThreshold = getBlankThresholdY();
+//		if(this.displayMode == ENumberFieldDisplayMode.VERBOSE) {
 		showWhiteAreas();
-		System.out.println("BlankThreshold: "+blankValueThreshold);
+//		}
+//		System.out.println("BlankThreshold: "+blankValueThreshold);
 		rangeX = getxRange();
 		rangesY = getyRange();
 		drawBoundingBox();
@@ -173,7 +211,10 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 			this.displayImage.getRaster().setPixel(x, i, js);
 			this.displayImage.getRaster().setPixel(x, i, js);
 		}
-		this.display.repaint();
+		if(this.displayMode == ENumberFieldDisplayMode.VERBOSE || 
+				this.displayMode == ENumberFieldDisplayMode.SINGLE_WINDOW) {
+			this.display.repaint();
+		}
 		
 	}
 
@@ -200,7 +241,7 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 
 
 	private void drawBoundingBox() {
-		System.out.println("Drawing the bounding box");
+//		System.out.println("Drawing the bounding box");
 		int[] blue = new int[]{0, 0, 255};
 		for(int i = 0; i < this.displayImage.getHeight(); i++) {
 			this.displayImage.getRaster().setPixel(this.rangeX[0], i, blue);
@@ -210,7 +251,10 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 			this.displayImage.getRaster().setPixel(i, this.rangesY[0], blue);
 			this.displayImage.getRaster().setPixel(i, this.rangesY[1], blue);
 		}
-		this.display.repaint();
+		if(this.displayMode == ENumberFieldDisplayMode.VERBOSE || 
+				this.displayMode == ENumberFieldDisplayMode.SINGLE_WINDOW) {
+			this.display.repaint();
+		}
 		
 	}
 
@@ -226,7 +270,7 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 			if(!fall) {
 				if(distribution[i] < distribution[i-1]) {
 					fall = true;
-					System.out.println("Fall at: "+i);
+//					System.out.println("Fall at: "+i);
 					border0 = i;
 					i-=10;
 					continue;
@@ -235,14 +279,14 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 			}
 
 			if(distribution[i] > distribution[i-1]) {
-				System.out.println("Rise at: "+i);
+//				System.out.println("Rise at: "+i);
 				border1 = i;
 				break;
 			}
 
 		}
 		border = (int)((double)(border0 + border1))/2;
-		System.out.println("Border: "+border);
+//		System.out.println("Border: "+border);
 		border = border * this.distributionElementFactor + this.distributionMin;
 		return border;
 	}
@@ -251,8 +295,8 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 	private int getBlankThreshold2() {
 		int[] maxima = getMaximaIndexes();
 		int thresholdIndex = (maxima[0] + maxima[1])/2;
-		System.out.println("Maxima: "+Arrays.toString(maxima));
-		System.out.println("ThresholdIndex = " + thresholdIndex);
+//		System.out.println("Maxima: "+Arrays.toString(maxima));
+//		System.out.println("ThresholdIndex = " + thresholdIndex);
 		return thresholdIndex * this.distributionElementFactor + this.distributionMin;
 	}
 
@@ -308,8 +352,11 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 				}
 			}
 		}
-		System.out.println("Display!!");;
-		ImageDisplay.displayImage(image, new Point(50, 400));
+//		System.out.println("Display!!");
+		if(this.displayMode == ENumberFieldDisplayMode.VERBOSE) {
+			ImageDisplay.displayImage(image, new Point(50, 400));
+		}
+		
 		this.xWhite = white;
 		
 	}
@@ -317,9 +364,10 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 
 	private void analyzeHistogramDistribution() {
 		this.distribution = getDistribution(this.xHistogram);
+		if(this.displayMode == ENumberFieldDisplayMode.VERBOSE)
 		Histogram.showHorizontalHistogram(
 				distribution, 12, new Point(10, 500));
-		System.out.println("Length: "+distribution.length);
+//		System.out.println("Length: "+distribution.length);
 	
 		
 	}
@@ -333,7 +381,7 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 		int limit = max - min;
 		
 		int[] distribution = new int[limit/100];
-		System.out.println("Min, max, limit: "+min+", "+max+", "+limit);
+//		System.out.println("Min, max, limit: "+min+", "+max+", "+limit);
 		int toAdd = limit/100;
 		this.distributionElementFactor = toAdd;
 		
@@ -375,7 +423,7 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 			if(!fall) {
 				if(distribution[i] < distribution[i-1]) {
 					fall = true;
-					System.out.println("Fall at: "+i);
+//					System.out.println("Fall at: "+i);
 					border0 = i;
 					i-=10;
 					continue;
@@ -384,14 +432,14 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 			}
 
 			if(distribution[i] > distribution[i-1]) {
-				System.out.println("Rise at: "+i);
+//				System.out.println("Rise at: "+i);
 				border1 = i;
 				break;
 			}
 
 		}
 		border = (int)((double)(border0 + border1))/2;
-		System.out.println("Border: "+border);
+//		System.out.println("Border: "+border);
 		border = border * this.distributionElementFactor + this.distributionMin;
 		return border;
 	}
