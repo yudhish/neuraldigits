@@ -103,10 +103,13 @@ public class NumberField {
 	}
 
 
-	private void getScheme() {
-		// TODO Auto-generated method stub
+	private NumberFieldScheme getScheme() {
+		return this.scheme;
 		
 	}
+	
+	
+	
 
 
 	/**

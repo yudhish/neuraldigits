@@ -3,6 +3,7 @@
  */
 package hr.fer.zemris.nd.analisys;
 
+import hr.fer.zemris.nd.document.util.Coordinate;
 import hr.fer.zemris.nd.document.util.RectangularArea;
 import hr.fer.zemris.nd.gui.ImageDisplay;
 import hr.fer.zemris.nd.gui.ImageDrawerTest;
@@ -15,7 +16,9 @@ import java.awt.image.WritableRaster;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -35,11 +38,17 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 	private WritableRaster raster;
 	private int[] xHistogram;
 	private int[] yHistogram;
+	private boolean[] xWhite;
+	private boolean[] yWhite;
 	public RectangularArea boundingBox;
 	private int[] distribution;
 	private int distributionElementFactor;
 	private int distributionMin;
 	private int blankValueThreshold;
+	private int yBlankThreshold;
+	private int[] rangeX;
+	private int[] rangesY;
+	private ImageDisplay display;
 	
 	
 	
@@ -56,14 +65,13 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 		int avg = (int)Picture.getImagePixelAverage(image);
 
 		this.preprocessingImage = getPreprocessingImage(avg);
-		ImageDisplay display = new ImageDisplay(preprocessingImage);
-//		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		display = new ImageDisplay(displayImage);
 		
 //		removeNoise(preprocessingImage, 4, 0.1);
 //		removeNoise(preprocessingImage, 4, 0.1);
 //		removeNoise(preprocessingImage, 4, 0.1);
 //		removeNoise(preprocessingImage, 4, 0.1);
-		display.repaint();
+		//display.repaint();
 
 		
 	}
@@ -148,7 +156,7 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 		performSegmentation();
 		// TODO finish segmentation here
 	
-		return null;
+		return drawSegments();
 	}
 
 
@@ -176,14 +184,113 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 		System.out.println("Define bounding box");
 		analyzeHistogramDistribution();
 		this.blankValueThreshold = getBlankThreshold();
+		this.yBlankThreshold = getBlankThresholdY();
 		showWhiteAreas();
 		System.out.println("BlankThreshold: "+blankValueThreshold);
-		int[] xRange = getxRange();
-		int[] yRange = getyRange();
+		rangeX = getxRange();
+		rangesY = getyRange();
+		drawBoundingBox();
+//		drawSegments();
+		
+	}
+	
+	
+	private List<RectangularArea> drawSegments() {
+		List<int[]> segmentLimits = getSegmentXLimits();
+		List<RectangularArea> l = new ArrayList<RectangularArea>();
+		for (int[] array: segmentLimits) {
+			drawVerticalLine(array[0], new int[]{255, 0, 0});
+			drawVerticalLine(array[1], new int[]{255, 0, 0});
+			RectangularArea a = new RectangularArea(new Coordinate(array[0], this.rangesY[0]), 
+					new Coordinate(array[1], this.rangesY[1]));
+			l.add(a);
+		}
+		return l;
+	}
+
+
+
+
+	private void drawVerticalLine(int x, int[] js) {
+		for(int i = 0; i < this.displayImage.getHeight(); i++) {
+			this.displayImage.getRaster().setPixel(x, i, js);
+			this.displayImage.getRaster().setPixel(x, i, js);
+		}
+		this.display.repaint();
 		
 	}
 
-	
+
+	private List<int[]> getSegmentXLimits() {
+		List<int[]> lista = new ArrayList<int[]>();
+		
+		boolean second = false;
+		int[] limit = new int[2];
+		for (int i = 1; i < xWhite.length-1; i++) {
+			if(xWhite[i-1] != xWhite[i]) {
+				if(second) {
+					limit[1] = i;
+					lista.add(limit);
+				} else {
+					limit = new int[2];
+					limit[0] = i;
+				}
+				second = !second;
+			}
+		}
+		return lista;
+	}
+
+
+	private void drawBoundingBox() {
+		System.out.println("Drawing the bounding box");
+		int[] blue = new int[]{0, 0, 255};
+		for(int i = 0; i < this.displayImage.getHeight(); i++) {
+			this.displayImage.getRaster().setPixel(this.rangeX[0], i, blue);
+			this.displayImage.getRaster().setPixel(this.rangeX[1], i, blue);
+		}
+		for(int i = 0; i < this.displayImage.getWidth(); i++) {
+			this.displayImage.getRaster().setPixel(i, this.rangesY[0], blue);
+			this.displayImage.getRaster().setPixel(i, this.rangesY[1], blue);
+		}
+		this.display.repaint();
+		
+	}
+
+
+	private int getBlankThresholdY() {
+		int border = -1;
+		int border0 = -1;
+		int border1 = -1;
+		int[] distribution = getDistribution(this.yHistogram);
+		boolean fall = false;
+		
+		for (int i = distribution.length-1; i > 0; i--) {
+			if(!fall) {
+				if(distribution[i] < distribution[i-1]) {
+					fall = true;
+					System.out.println("Fall at: "+i);
+					border0 = i;
+					i-=10;
+					continue;
+				}
+				
+			}
+
+			if(distribution[i] > distribution[i-1]) {
+				System.out.println("Rise at: "+i);
+				border1 = i;
+				break;
+			}
+
+		}
+		border = (int)((double)(border0 + border1))/2;
+		System.out.println("Border: "+border);
+		border = border * this.distributionElementFactor + this.distributionMin;
+		return border;
+	}
+
+
 	private int getBlankThreshold2() {
 		int[] maxima = getMaximaIndexes();
 		int thresholdIndex = (maxima[0] + maxima[1])/2;
@@ -246,6 +353,7 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 		}
 		System.out.println("Display!!");;
 		ImageDisplay.displayImage(image, new Point(50, 400));
+		this.xWhite = white;
 		
 	}
 
@@ -333,15 +441,50 @@ public class HistogramMinimaAnaliser implements ISchemeAnaliser{
 
 
 	private int[] getyRange() {
-		// get left limit
+		int[] range = new int[2];
+		this.yWhite = new boolean[this.yHistogram.length];
+		for (int i = 0; i < yWhite.length; i++) {
+			if(yHistogram[i] > this.blankValueThreshold) {
+				yWhite[i] = true;
+			} else {
+				yWhite[i] = false;
+			}
+		}
+		for (int i = 0; i < this.yWhite.length; i++) {
+			if(!yWhite[i]) {
+				range[0] = i;
+				break;
+			}	
+		}
 		
-		return null;
+		for (int i = yWhite.length-1; i > 0; i--) {
+			if(!yWhite[i]) {
+				range[1] = i;
+				break;
+			}
+		}
+		
+		return range;
 	}
 
 
 	private int[] getxRange() {
-		// TODO Auto-generated method stub
-		return null;
+		int[] range = new int[2];
+		for (int i = 0; i < this.xWhite.length; i++) {
+			if(!xWhite[i]) {
+				range[0] = i;
+				break;
+			}	
+		}
+		
+		for (int i = xWhite.length-1; i > 0; i--) {
+			if(!xWhite[i]) {
+				range[1] = i;
+				break;
+			}
+		}
+		
+		return range;
 	}
 
 
