@@ -252,6 +252,7 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 		Raster r=digit.getRaster();
 		for(int i=r.getHeight()-1;i>=0;i--){
 			double avg=middleValueOnOrdinate(digitIndex, i);
+			System.out.println(avg);
 			if(avg<treshold){
 				return i;
 			}

@@ -3,6 +3,7 @@ package hr.fer.zemris.nd.document;
 import hr.fer.zemris.nd.document.util.RectangularArea;
 import hr.fer.zemris.nd.document.util.enums.ESegment;
 import hr.fer.zemris.nd.gui.ImageDisplay;
+import hr.fer.zemris.nd.imagelib.Picture;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -99,16 +100,25 @@ public class DigitField {
 	
 	public BufferedImage getScaledImage(int width, int height){
 		
-		Image original=digitImage;
+				
+		BufferedImage filteredImage=new BufferedImage(digitImage.getWidth(),digitImage.getHeight(),BufferedImage.TYPE_BYTE_GRAY);
+		filteredImage.getGraphics().drawImage(digitImage, 0, 0, null);
+		
+		for(int i=0;i<10;i++){
+			filteredImage=Picture.doAntialiasing(filteredImage, 3);
+		}
+		filteredImage=Picture.automaticSigmoidalTransform(filteredImage, 50);
 		
 		BufferedImage image=new BufferedImage(width,height,BufferedImage.TYPE_BYTE_BINARY);
 		Graphics2D bg = image.createGraphics();
 		bg.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 		         RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 		bg.scale((double)width/(double)scheme.getWidth(), (double)height/(double)scheme.getHeight());
-		
-		bg.drawImage(original, 0, 0, null);
+		bg.drawImage(filteredImage, 0, 0, null);
 		bg.dispose();
+		
+		BufferedImage bwImage=new BufferedImage(width,height,BufferedImage.TYPE_BYTE_BINARY);
+		bwImage.getGraphics().drawImage(image, 0, 0, null);
 		
 		return image;		
 		

@@ -21,9 +21,9 @@ public class Training {
 	 */
 	public static void main(String[] args) {
 		
-		String rootTrainingFolder="D:/neural/workspace/Neural Digits/stable/Samples";
+		String rootTrainingFolder="D:/neural/Samples";
 		
-		String matlabExternalFolder="D:/neural/workspace/Neural Digits/matlabextern";
+		String matlabExternalFolder="D:/neural/matlab";
 		
 		INetTrainer trainer =new ExternalMatlabTrainer(matlabExternalFolder);
 		
@@ -120,7 +120,8 @@ public class Training {
 										
 					DigitField dField=digitTransformer.transformImageToDigit(grayImage);
 					dField.showMe(disp);
-					trainer.addSegmentSaturationExample(dField.getSegmentSaturatins(), digitValue);					
+					trainer.addSegmentSaturationExample(dField.getSegmentSaturatins(), digitValue);
+					trainer.addImageExample(dField, digitValue);
 					
 				}
 			}			
@@ -128,6 +129,7 @@ public class Training {
 		}
 		
 		trainer.startTrainingSaturation();
+		trainer.startTrainingScaled(10, 20);
 
 	}
 
