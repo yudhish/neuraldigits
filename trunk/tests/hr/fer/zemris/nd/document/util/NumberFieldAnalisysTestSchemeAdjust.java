@@ -18,7 +18,7 @@ import javax.imageio.ImageIO;
  * @author goran
  *
  */
-public class NumberFieldAnalisysTest {
+public class NumberFieldAnalisysTestSchemeAdjust {
 
 	/**
 	 * @param args
@@ -28,29 +28,29 @@ public class NumberFieldAnalisysTest {
 		System.out.println("Loading image.");
 		try {
 			image = ImageIO.read(new File(
-					"/home/goran/Desktop/p0000019.png"));
+					"/home/goran/Desktop/p0000008.png"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		System.out.println("Average: "+Picture.getImagePixelAverage(image));
+		NumberField field = new NumberField(image, ENumberFieldDisplayMode.VERBOSE);	
 		
-		
-		
-		System.out.println("Image loaded. ");
-		
-		NumberField field = new NumberField(image, ENumberFieldDisplayMode.VERBOSE);
-		String name = "/home/goran/Desktop/folder/name";
-		for(DigitField digit: field.getDigitFields()) {
-			try {
-				ImageIO.write(digit.getDigitImage(), "png", new File(name));
-				name += "1";
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		BufferedImage image1 = null;
+		System.out.println("Loading image.");
+		try {
+			image1 = ImageIO.read(new File(
+					"/home/goran/Desktop/p0000021.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		System.out.println("Field initialzed");
+		
+		System.out.println("Drugo polje sad");
+		
+		NumberField field1 = new NumberField(image1, field.getScheme());
+		System.out.println(field1.getScheme());
 		
 	}
 
