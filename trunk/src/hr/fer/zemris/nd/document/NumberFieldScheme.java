@@ -77,6 +77,14 @@ public class NumberFieldScheme {
 	public RectangularArea getInterestArea(int i) {
 		return this.digitAreas.get(i);
 	}
+
+
+	public void translateBy(int x, int y) {
+		for (RectangularArea area : this.digitAreas) {
+			area.translateBy(x, y);
+		}
+		
+	}
 	
 	
 }

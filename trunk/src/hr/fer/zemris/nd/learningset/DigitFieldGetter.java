@@ -31,6 +31,7 @@ public class DigitFieldGetter {
 	private File inFolderLocation;
 	private File outFolderLocation;
 	private List<File> directoriesToProcess;
+	private NumberFieldScheme currentScheme;
 	
 	public DigitFieldGetter(File inputFolderLocation, 
 			File outFolderLocation) {
@@ -97,7 +98,8 @@ public class DigitFieldGetter {
 				System.err.println("Unable to read file: "+file);
 				return;
 			}
-			NumberField field = new NumberField(fieldImage);
+			
+			NumberField field = new NumberField(fieldImage, this.currentScheme);
 			field.setDisplayMode(ENumberFieldDisplayMode.NONE);
 			String folderName = outFolder.getName();
 			if(folderName.length()<10){
@@ -149,6 +151,7 @@ public class DigitFieldGetter {
 		try {
 			BufferedImage fieldImage = ImageIO.read(firstFile);
 			NumberField field = new NumberField(fieldImage);
+			this.currentScheme = field.getScheme();
 			field.setDisplayMode(ENumberFieldDisplayMode.NONE);
 			String folderName = outFolder.getName();
 			if(folderName.length()<10){
