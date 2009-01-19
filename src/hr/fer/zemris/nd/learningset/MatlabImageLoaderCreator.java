@@ -18,16 +18,16 @@ public class MatlabImageLoaderCreator {
 	 */
 	public static void main(String[] args) {
 		List<Integer> size = new ArrayList<Integer>();
-		size.add(10); // 0
-		size.add(15); // 1
-		size.add(25); // 2
-		size.add(33); // 3
-		size.add(4);  // 4
-		size.add(37); // 5
-		size.add(32); // 6 
-		size.add(37); // 7
-		size.add(23); // 8
-		size.add(27); // 9
+		size.add(186); // 0
+		size.add(134); // 1
+		size.add(223); // 2
+		size.add(163); // 3
+		size.add(266);  // 4
+		size.add(108); // 5
+		size.add(167); // 6 
+		size.add(187); // 7
+		size.add(90); // 8
+		size.add(232); // 9
 		
 		MatlabImageLoad.generateImageLoadFile(new File("Load.m"), size);
 

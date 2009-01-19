@@ -1,5 +1,8 @@
 package training;
 
+import hr.fer.zemris.nd.document.DigitField;
+
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -10,6 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+
 
 
 
@@ -18,24 +23,24 @@ public class ExternalMatlabTrainer implements INetTrainer {
 
 	private String outputFolder;
 	private Map<Integer, List<List<Double>>> saturationExamples;
-	private Map<Integer,List<BufferedImage>> scaledImagesExamples;
+	private Map<Integer,List<DigitField>> digitExamples;
 	
 	public ExternalMatlabTrainer(String outputFolder){
 		this.outputFolder=outputFolder;
 		saturationExamples=new HashMap<Integer, List<List<Double>>>();
-		scaledImagesExamples=new HashMap<Integer, List<BufferedImage>>();
+		digitExamples=new HashMap<Integer, List<DigitField>>();
 		for(int i=0;i<10;i++){
 			saturationExamples.put(i, new ArrayList<List<Double>>());
-			scaledImagesExamples.put(i,new ArrayList<BufferedImage>());
+			digitExamples.put(i,new ArrayList<DigitField>());
 		}
 	}
 	
 	@Override
-	public void addScaledImageExample(BufferedImage image, int digit) {
+	public void addImageExample(DigitField image, int digit) {
 		if(digit<0 || digit >9){
 			throw new IllegalArgumentException("Digit must be between 0 and 9!");
 		}
-		scaledImagesExamples.get(digit).add(image);
+		digitExamples.get(digit).add(image);
 
 	}
 
@@ -128,8 +133,33 @@ public class ExternalMatlabTrainer implements INetTrainer {
 	}
 	
 	@Override
-	public void startTrainingScaled(){
+	public void startTrainingScaled(int width, int height){
 		
+		List<DigitField> tmpList=null;
+		
+		
+		
+		for(int i=0;i<10;i++){
+			
+			File digitDirectory=new File(outputFolder+"/"+width+"_"+height+"/"+i);
+			digitDirectory.mkdirs();
+			
+			tmpList=digitExamples.get(i);
+			int numberId=0;
+			for(DigitField example:tmpList){
+				File digitFile=new File(digitDirectory.getAbsolutePath()+"/"+numberId+".bmp");
+				BufferedImage scaledDigitImage=example.getScaledImage(width, height);
+				
+								
+				try {
+					ImageIO.write(scaledDigitImage, "bmp", digitFile);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				numberId++;
+			}
+		}
 	}
 	
 	private void write7_10ExamplesToFile(List<Double> example, int digit, BufferedWriter writer) throws IOException{
@@ -155,7 +185,7 @@ public class ExternalMatlabTrainer implements INetTrainer {
 		writer.write("T=[T t];\r\n\r\n");		
 	}
 	
-private void write7_1ExamplesToFile(List<Double> example, int digit, BufferedWriter writer) throws IOException{
+	private void write7_1ExamplesToFile(List<Double> example, int digit, BufferedWriter writer) throws IOException{
 		
 		writer.write("p=[");
 		for(int i=0;i<7;i++){
@@ -170,4 +200,15 @@ private void write7_1ExamplesToFile(List<Double> example, int digit, BufferedWri
 		
 	}
 
+
+
+	private String intToString(int number){
+		String ret="";
+		for(int i=0;i<4;i++){
+			int rem=number%10;
+			number=number/10;
+			ret=""+rem+ret;
+		}
+		return ret;
+	}
 }

@@ -88,18 +88,18 @@ public class Picture {
 		int min=getImageMinPixel(image);
 		int max=getImageMaxPixel(image);
 		
-		System.out.println("Min: "+min);
-		System.out.println("Max: "+max);
+		//System.out.println("Min: "+min);
+		//System.out.println("Max: "+max);
 		
 		Coordinate inputRange=new Coordinate(min,max);
 		Coordinate outputRange=new Coordinate(0,255);
 		int avg=(int)getImagePixelAverage(image);
 		
-		System.out.println("Avg: "+avg);
+		//System.out.println("Avg: "+avg);
 		
-		int treshold=avg;//-(avg-min)/;/*avg;*/
+		int treshold=avg-(avg-min)/6;//-(avg-min)/;/*avg;*/
 		
-		System.out.println("Treshold: "+treshold);
+		//System.out.println("Treshold: "+treshold);
 		
 		return  sigmoidalTransform(image, treshold, slope, inputRange, outputRange);	
 		
