@@ -23,11 +23,11 @@ public class EdgeDigitAnaliserTest {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
-		String name1="duh.png";
+		/*String name1="test0";
 		BufferedImage imageT=null;
 		
 		try {
-			imageT = ImageIO.read(new File(name1));
+			imageT = ImageIO.read(new File(name1+".png"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -36,17 +36,38 @@ public class EdgeDigitAnaliserTest {
 		BufferedImage imageTT=new BufferedImage(imageT.getWidth(),imageT.getHeight(),BufferedImage.TYPE_BYTE_GRAY);
 		imageTT.getGraphics().drawImage(imageT, 0, 0, null);
 		
+		BufferedImage imageTTT=new BufferedImage(imageT.getWidth(),imageT.getHeight(),BufferedImage.TYPE_BYTE_GRAY);
+		imageTTT.getGraphics().drawImage(imageT, 0, 0, null);
+		
 		ImageDisplay.displayImage(imageT);
 		
-		imageTT=Picture.automaticSigmoidalTransform(imageTT, 100);
+		for(int i=0;i<5;i++){
+			imageTT=Picture.doAntialiasing(imageTT, 2);
+		}		
 		ImageDisplay.displayImage(imageTT);
 		
+		for(int i=0;i<5;i++){
+			imageTTT=Picture.doAntialiasing(imageTTT, 2);
+		}
+		
+		
+						
+		imageTTT=Picture.automaticSigmoidalTransform(imageTTT, 100);
+		ImageDisplay.displayImage(imageTTT);
+		
+		try {
+			ImageIO.write(imageTTT,"png",new File(name1+"_corr.png"));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		*/
 		
 		
 		
-		
-		if(true) return;
-		String name="prazna";
+		if(false) return;
+		String name="osam";
 		
 		List<BufferedImage> digits=new ArrayList<BufferedImage>();
 		BufferedImage image=null;
@@ -81,9 +102,16 @@ public class EdgeDigitAnaliserTest {
 		BufferedImage image2=new BufferedImage(image.getWidth(),image.getHeight(),BufferedImage.TYPE_BYTE_GRAY);
 		image2.getGraphics().drawImage(image, 0, 0, null);
 		
+		/*for(int i=0;i<10;i++){
+			image2=Picture.doAntialiasing(image2, 1);
+		}
+		
+		image2=Picture.automaticSigmoidalTransform(image2, 50);
+		
+		*/
 		
 		DigitField df=transformer.transformImageToDigit(image2);
-		df.showMe();
+		//df.showMe();
 		
 		BufferedImage scaled =df.getScaledImage(40, 80);
 		
