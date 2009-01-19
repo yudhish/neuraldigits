@@ -66,7 +66,7 @@ public class DigitField {
 		this.scheme = scheme;
 	}
 	
-	public void showMe(){
+	public void showMe(ImageDisplay display){
 		BufferedImage image2=new BufferedImage(scheme.getWidth(),scheme.getHeight(),BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics g=image2.getGraphics();
 		g.drawImage(digitImage, 0, 0, null);
@@ -94,7 +94,7 @@ public class DigitField {
 		ra=scheme.getSegmentBox(ESegment.UPPER_RIGHT);
 		g.drawRect(ra.getTopLeft().getX(), ra.getTopLeft().getY(), ra.getWidth(), ra.getHeight());
 		
-		ImageDisplay disp=new ImageDisplay(image2);
+		display.setImage(image2);
 	}
 	
 	public BufferedImage getScaledImage(int width, int height){
@@ -163,12 +163,22 @@ public class DigitField {
 			dev=avg-min;
 		}
 		
-		System.out.println("Max: "+max);
-		System.out.println("Min: "+ min);
-		System.out.println("Avg: "+ avg);
-		System.out.println("MaxDev: " +dev );
+		if(max-min<0.4){
+			max=1;
+		}
 		
-		return values;		
+		List<Double> scaledValues=new ArrayList<Double>();
+		
+		for(Double value:values){
+			scaledValues.add((value-min)/(max-min));
+		}
+		
+		//System.out.println("Max: "+max);
+		//System.out.println("Min: "+ min);
+		//System.out.println("Avg: "+ avg);
+		//System.out.println("MaxDev: " +dev );
+		
+		return scaledValues;		
 	}
 	
 	
