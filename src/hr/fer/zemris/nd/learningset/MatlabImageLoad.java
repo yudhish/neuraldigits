@@ -22,8 +22,9 @@ public class MatlabImageLoad {
 		try {
 			BufferedWriter writer = new BufferedWriter(
 					new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
+			writer.write("P=[];\n");
 			for(int i = 0; i < 10; i++) {
-				for(int j = 0; j <= imageNumber.get(0); j++) {
+				for(int j = 0; j <= imageNumber.get(i); j++) {
 					write(i, j, writer);
 				}
 			}
