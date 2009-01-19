@@ -366,6 +366,15 @@ public class RectangularArea {
 			return false;
 		return true;
 	}
+
+
+	public void translateBy(int x, int y) {
+		this.bottomLeft.translateBy(x, y);
+		this.topLeft.translateBy(x, y);
+		this.bottomRight.translateBy(x, y);
+		this.topRight.translateBy(x, y);
+		
+	}
 		
 	
 }

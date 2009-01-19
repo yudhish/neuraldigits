@@ -140,4 +140,11 @@ public class Coordinate {
 		return buffer.toString();
 	}
 
+
+	public void translateBy(int x, int y) {
+		this.x += x;
+		this.y += y;
+		
+	}
+
 }

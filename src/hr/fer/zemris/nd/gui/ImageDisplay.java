@@ -33,6 +33,19 @@ public class ImageDisplay {
 	}
 	
 	
+	public ImageDisplay(BufferedImage image, Point location) {
+		this.image = image;
+		this.imageDrawer = new BufferedImageDrawer(image);
+		this.frame = new JFrame();
+		frame.add(imageDrawer);
+		frame.setSize(new Dimension(image.getWidth(), image.getHeight()+40));
+		frame.setLocation(location);
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		
+	}
+	
+	
 	public void setImage(BufferedImage image) {
 		this.image = image;
 		imageDrawer.setImage(image);
