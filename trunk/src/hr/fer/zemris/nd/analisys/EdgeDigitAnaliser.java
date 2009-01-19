@@ -28,10 +28,10 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 	public EdgeDigitAnaliser(List<BufferedImage> digits){
 		this.digitImages=new ArrayList<BufferedImage>();
 		for(BufferedImage newImage:digits){
-			newImage=Picture.doAntialiasing(newImage, 1);
-			newImage=Picture.automaticSigmoidalTransform(newImage, 50);
+			//newImage=Picture.doAntialiasing(newImage, 1);
+			//newImage=Picture.automaticSigmoidalTransform(newImage, 50);
 			digitImages.add(newImage);
-			new ImageDisplay(newImage);
+			//new ImageDisplay(newImage);
 		}
 	}
 	
@@ -45,8 +45,8 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 															currentDigitBox.getTopLeft().getY(),
 															currentDigitBox.getWidth(),
 															currentDigitBox.getHeight());
-			newImage=Picture.doAntialiasing(newImage, 1);
-			newImage=Picture.automaticSigmoidalTransform(newImage, 50);
+			//newImage=Picture.doAntialiasing(newImage, 1);
+			//newImage=Picture.automaticSigmoidalTransform(newImage, 50);
 			digitImages.add(newImage);
 			
 		}		
@@ -183,9 +183,16 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 		
 	
 		//only for testing
-		for(BufferedImage digit:digitImages){
-			WritableRaster r=digit.getRaster();
-			buffer[0]=0;
+		/*for(BufferedImage digit:digitImages){
+			
+			BufferedImage colorImage=new BufferedImage(digit.getWidth(),digit.getHeight(),BufferedImage.TYPE_4BYTE_ABGR);
+			colorImage.getGraphics().drawImage(digit, 0, 0, null);						
+						
+			WritableRaster r=colorImage.getRaster();
+			buffer[0]=255;
+			buffer[1]=0;
+			buffer[2]=0;
+			buffer[3]=255;
 			for(int i=0;i<r.getWidth();i++){
 				r.setPixel(i, topOrdinate, buffer);
 				r.setPixel(i, bottomOrdinate, buffer);
@@ -218,9 +225,9 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 				}
 			
 			}
-			ImageDisplay disp=new ImageDisplay(digit);
+			ImageDisplay disp=new ImageDisplay(colorImage);
 		
-		}
+		}*/
 		
 		return retTransformer;
 	}
@@ -350,7 +357,7 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 			initialLine.setY(i);
 			double avg=middleValueOnYXLine(digitIndex, initialLine);
 			double diff=oldAvg-avg;
-			System.out.println("From left diff= "+diff);
+			//System.out.println("From left diff= "+diff);
 			if(diff>diferentialTreshold){
 				return initialLine;
 			}
@@ -368,7 +375,7 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 			initialLine.setY(i);
 			double avg=middleValueOnYXLine(digitIndex, initialLine);
 			double diff=oldAvg-avg;
-			System.out.println("From right diff= "+diff);
+			//System.out.println("From right diff= "+diff);
 			if(diff>diferentialTreshold){
 				return initialLine;
 			}
@@ -378,7 +385,7 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 	}
 	
 	private int aproachLineFromTop(int digitIndex, int initialOrdinate){
-		double diferentialTreshold=15;
+		double diferentialTreshold=10;
 		Raster r=digitImages.get(digitIndex).getRaster();
 		
 		double oldAvg=middleValueOnOrdinate(digitIndex, initialOrdinate);
@@ -386,7 +393,7 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 		for(int j=initialOrdinate+1;j<r.getHeight();j++){
 			double avg=middleValueOnOrdinate(digitIndex, j);
 			double diff=oldAvg-avg;
-			System.out.println("From top diff= "+diff);
+			//System.out.println("From top diff= "+diff);
 			if(diff>diferentialTreshold){
 				return j;
 			}
@@ -396,14 +403,14 @@ public class EdgeDigitAnaliser implements IDigitAnaliser {
 	}
 	
 	private int aproachLineFromBottom(int digitIndex, int initialOrdinate){
-		double diferentialTreshold=15;
+		double diferentialTreshold=10;
 				
 		double oldAvg=middleValueOnOrdinate(digitIndex, initialOrdinate);
 		
 		for(int j=initialOrdinate-1;j>=0;j--){
 			double avg=middleValueOnOrdinate(digitIndex, j);
 			double diff=oldAvg-avg;
-			System.out.println("From bottom diff= "+diff);
+			//System.out.println("From bottom diff= "+diff);
 			if(diff>diferentialTreshold){
 				return j;
 			}

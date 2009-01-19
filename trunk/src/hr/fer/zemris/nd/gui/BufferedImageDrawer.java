@@ -56,7 +56,7 @@ public class BufferedImageDrawer extends Component {
 	 */
 	@Override
 	public void paint(Graphics g) {
-		System.out.println("paint called");
+		//System.out.println("paint called");
 		g.drawImage(image, 0, 0, null);
 	}
 	

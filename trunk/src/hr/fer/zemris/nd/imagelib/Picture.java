@@ -72,11 +72,7 @@ public class Picture {
 		for(int i=0;i<wRaster.getWidth();i++){
 			for(int j=0;j<wRaster.getHeight();j++){
 				wRaster.getPixel(i, j, buffer);
-				
-				if(buffer[0]==inputRange.getY()){
-					i=i;
-				}
-				
+								
 				int newPix=sigmoidal(buffer[0], treshold, slope, inputRange, outputRange);
 				
 				buffer[0]=newPix;
@@ -101,7 +97,7 @@ public class Picture {
 		
 		System.out.println("Avg: "+avg);
 		
-		int treshold=avg+25;/*avg;*/
+		int treshold=avg;//-(avg-min)/;/*avg;*/
 		
 		System.out.println("Treshold: "+treshold);
 		
