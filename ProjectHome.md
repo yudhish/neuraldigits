@@ -1,0 +1,1 @@
+Neural network for 7-segment display digit format recognition
